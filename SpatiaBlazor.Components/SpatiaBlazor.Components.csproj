@@ -1,0 +1,36 @@
+<Project Sdk="Microsoft.NET.Sdk.Razor">
+
+    <PropertyGroup>
+        <TargetFramework>net8.0</TargetFramework>
+        <Nullable>enable</Nullable>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <PackageId>SpatiaBlazor.Components</PackageId>
+    </PropertyGroup>
+
+
+    <ItemGroup>
+        <SupportedPlatform Include="browser"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Humanizer" Version="2.14.1" />
+        <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="8.0.8" />
+        <PackageReference Include="MudBlazor" Version="6.21.0" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\SpatiaBlazor.Geocode.Google\SpatiaBlazor.Geocode.Google.csproj" />
+      <ProjectReference Include="..\SpatiaBlazor.Geocode.Photon\SpatiaBlazor.Geocode.Photon.csproj" />
+      <ProjectReference Include="..\SpatiaBlazor.Leaflet\SpatiaBlazor.Leaflet.csproj" />
+      <ProjectReference Include="..\SpatiaBlazor.OpenLayers\SpatiaBlazor.OpenLayers.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <UpToDateCheckInput Remove="Geolocate\GeolocationComponent.razor" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="Geocode\Suggestions\Google\" />
+    </ItemGroup>
+
+</Project>
