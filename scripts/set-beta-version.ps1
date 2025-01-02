@@ -30,16 +30,16 @@ function ParseVersion([Parameter()] $version) {
 # get latest tag and set as version after stripping v and any prerelease tag
 $version = git describe --abbrev=0 --tags | % {$_.replace('v', '')} | % {if ($_.Contains('-')) { $_.Substring(0, $_.IndexOf('-'))} else {$_}}
 
+if ($version -eq $null) {
+    $version = '1.0.0'
+    Write-Host "No git tagged versions exist, setting to 1.0.0"
+}
+
 $branchVersion = $branchName.replace('v','')
 
 $branchVersionSplit = $branchVersion.Split('.')
 if ($branchVersionSplit.Length -lt 3) {
-    # branch name is not a valid semver, auto parse last tag for version
-    if ($version -eq $null) {
-        # if no existing tag set version to 1.0.0
-        $version = '1.0.0'
-        Write-Host "No git tagged versions exist, setting to 1.0.0"
-    } elseif ($branchVersion -match "^[\d\.]+$") {
+    if ($branchVersion -match "^[\d\.]+$") {
         $versionMajor = [int]$version.split(".")[0]
         $branchVersionMajor = [int]$branchVersion
         if ($branchVersionMajor -gt $versionMajor) {
@@ -50,7 +50,8 @@ if ($branchVersionSplit.Length -lt 3) {
             $version = ParseVersion($version)
         }
     }
-    else {
+    elseif ($version -ne '1.0.0'){
+        # branch name is not a valid semver or number and version is not set to default, auto parse last tag for version
         $version = ParseVersion($version)
     }
 } else {
