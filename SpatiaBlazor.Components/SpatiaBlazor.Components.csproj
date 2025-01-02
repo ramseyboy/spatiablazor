@@ -5,11 +5,22 @@
         <Nullable>enable</Nullable>
         <ImplicitUsings>enable</ImplicitUsings>
         <PackageId>SpatiaBlazor.Components</PackageId>
+        <Title>SpatiaBlazor</Title>
+        <Authors>Walker Hannan</Authors>
+        <Description>Geospatial Blazor components and sdk for interacting with common geocoding and mapping backends</Description>
+        <PackageProjectUrl>https://github.com/ramseyboy/spatiablazor/</PackageProjectUrl>
+        <RepositoryUrl>https://github.com/ramseyboy/spatiablazor</RepositoryUrl>
+        <RepositoryType>git</RepositoryType>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
+        <IsPackable>true</IsPackable>
     </PropertyGroup>
 
+    <ItemGroup>
+      <None Include="README.md" Pack="true" PackagePath=""/>
+    </ItemGroup>
 
     <ItemGroup>
-        <SupportedPlatform Include="browser"/>
+      <SupportedPlatform Include="browser"/>
     </ItemGroup>
 
     <ItemGroup>
@@ -31,6 +42,12 @@
 
     <ItemGroup>
       <Folder Include="Geocode\Suggestions\Google\" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Update="README.md">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
     </ItemGroup>
 
 </Project>

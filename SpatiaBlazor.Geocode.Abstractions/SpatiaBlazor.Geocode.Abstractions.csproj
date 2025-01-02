@@ -6,7 +6,6 @@
         <Nullable>enable</Nullable>
 
         <IsPackable>false</IsPackable>
-        <IsTestProject>true</IsTestProject>
         <RootNamespace>BlazorGeospatial.Geocode.Client</RootNamespace>
     </PropertyGroup>
 
@@ -22,10 +21,6 @@
         <PackageReference Include="NetTopologySuite.IO.GeoJSON4STJ" Version="4.0.0" />
         <PackageReference Include="xunit" Version="2.5.3"/>
         <PackageReference Include="xunit.runner.visualstudio" Version="2.5.3"/>
-    </ItemGroup>
-
-    <ItemGroup>
-        <Using Include="Xunit"/>
     </ItemGroup>
 
 </Project>

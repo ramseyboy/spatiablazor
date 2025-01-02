@@ -1,0 +1,35 @@
+name: Deploy Nuget
+
+on:
+  workflow_run:
+    workflows: ["Build and Test"]
+    branches: ["v[0-9]+.[0-9]+.[0-9]+*"]
+    tags: ["v[0-9]+.[0-9]+.[0-9]+*"]
+    types:
+      - completed
+
+jobs:
+  create_nuget_package:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
+      - name: 'Set version to Beta'
+        shell: pwsh
+        run: ./scripts/set-beta-version.ps1 -versionPart 'minor' -branchName ${{github.ref_name}} -buildNumber ${{github.run_number}}
+        if: ${{ github.ref_type != 'tag' }}
+      - name: 'Set version to tagged version'
+        shell: pwsh
+        run: ./scripts/set-tagged-version.ps1
+        if: ${{ github.ref_type == 'tag' }}
+      - name: 'Nuget Pack'
+        run: |
+          dotnet pack ./*.sln --configuration Release /p:Version=${VERSION} --output pack/
+#    - name: 'Publish Nuget Package'
+#      run: dotnet nuget push pack/**.nupkg --source https://nuget.pkg.github.com/ramseyboy/index.json --api-key ${GITHUB_TOKEN}
+#      env:
+#        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+#      if: ne(variables['Build.Reason'], 'PullRequest')  
