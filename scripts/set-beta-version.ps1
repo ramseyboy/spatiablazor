@@ -59,7 +59,8 @@ if ($branchVersionSplit.Length -lt 3) {
 }
 
 # set prerelease tag to beta
-$version =  "$version-beta.$buildNumber"
+$date = Get-Date -Format "yyyyMMdd"
+$version =  "$version-beta.$date.$buildNumber"
 Write-Host "Final version: $version"
 echo "VERSION=$version" >> $env:GITHUB_ENV
 exit 0

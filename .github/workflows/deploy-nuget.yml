@@ -3,8 +3,8 @@ name: Deploy Nuget
 on:
   workflow_run:
     workflows: ["Build and Test"]
-    branches: ["v[0-9]+.[0-9]+.[0-9]", "v[0-9]+.[0-9]+.[0-9]-.*", "v[0-9]"]
-    tags: ["v[0-9]+.[0-9]+.[0-9]+"]
+    branches: ["main", "v[0-9]"]
+    tags: ["v[0-9]+.[0-9]+.[0-9]+.*"]
     types:
       - completed
 
@@ -31,4 +31,4 @@ jobs:
           dotnet pack ./*.sln --configuration Release /p:Version=${VERSION} --output pack/
       - name: 'Publish Nuget Package'
         run: dotnet nuget push pack/**.nupkg -s https://api.nuget.org/v3/index.json --api-key ${{secrets.NUGET_API_KEY}}
-        if: ${{github.event_name != 'pull_request'}}  
+        if: ${{github.event_name != 'pull_request' && github.ref_type == 'tag'}}  
