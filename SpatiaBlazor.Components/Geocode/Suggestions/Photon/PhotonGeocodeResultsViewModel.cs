@@ -5,7 +5,7 @@ using SpatiaBlazor.Geocode.Photon;
 
 namespace SpatiaBlazor.Components.Geocode.Suggestions.Photon;
 
-public sealed record PhotonGeocodeResultsViewModel : IGeocodeResultsViewModel, IAddressRecord
+public sealed record PhotonGeocodeResultsViewModel : IGeocodeResultsViewModel
 {
     public PhotonGeocodeResultsViewModel(PhotonGeocodeRecord record, IAddressLabelFactory? addressLabelFactory = null)
     {

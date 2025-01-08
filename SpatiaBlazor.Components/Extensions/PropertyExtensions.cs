@@ -1,22 +1,23 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.Reflection;
 using Humanizer;
+using SpatiaBlazor.Components.Mixins;
 using SpatiaBlazor.Components.Validation;
 
 namespace SpatiaBlazor.Components.Extensions;
 
 public static class PropertyExtensions
 {
-    public static string GetPropertyDisplay<T>(this T _, string propertyName)
+    public static string GetPropertyDisplay<TViewModel>(this TViewModel _, string propertyName) where TViewModel: IViewModelMixin
     {
-        return typeof(T).GetProperty(propertyName).GetPropertyDisplayName().Humanize();
+        return typeof(TViewModel).GetProperty(propertyName)?.GetPropertyDisplayName()?.Humanize() ?? string.Empty;
     }
 
-    public static ValidationAttribute GetPropertyValidation<T>(this T type, string propertyName)
+    public static ValidationAttribute GetPropertyValidation<TViewModel>(this TViewModel _, string propertyName) where TViewModel: IViewModelMixin
     {
-        return new PropertyValidationAttribute<T>(propertyName);
+        return new PropertyValidationAttribute<TViewModel>(propertyName);
     }
-    
+
     public static string GetPropertyDisplayName(this PropertyInfo propertyInfo)
     {
         if (!Attribute.IsDefined(propertyInfo, typeof(DisplayAttribute)))

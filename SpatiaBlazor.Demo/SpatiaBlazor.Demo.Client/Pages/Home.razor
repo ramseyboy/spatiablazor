@@ -1,4 +1,11 @@
 ﻿@page "/"
-@using SpatiaBlazor.Components.Geocode.Suggestions
+@using SpatiaBlazor.Components.Geocode
 
-<MudAddressSuggestionsComponent Label="Find an Address"></MudAddressSuggestionsComponent>
+<MudText>Selected: @_model?.ToString()</MudText>
+
+<MudAddressFormComponent @bind-Value="_model"></MudAddressFormComponent>
+
+@code
+{
+    private AddressFormViewModel? _model;
+}
