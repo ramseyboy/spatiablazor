@@ -2,7 +2,7 @@
 
 namespace SpatiaBlazor.Components.Validation;
 
-public class PropertyValidationAttribute<TModelType> : ValidationAttribute
+internal class PropertyValidationAttribute<TModelType> : ValidationAttribute
 {
     private readonly List<ValidationAttribute> _validationAttributes;
 

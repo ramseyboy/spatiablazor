@@ -9,16 +9,16 @@ public sealed class GooglePlacesGeocodeClient(
     IHttpClientFactory httpClientFactory,
     ILogger<GooglePlacesGeocodeClient> logger,
     IOptions<GooglePlacesGeocodeConfigurationOptions> options)
-    : IGeocodeClient<GooglePlacesGeocodeResponse>
+    : IGeocodeClient<GooglePlacesGeocodeRecord>
 {
     public const string HttpClientTag = "GooglePlacesGeocodeService";
 
-    public Task<IEnumerable<GooglePlacesGeocodeResponse>> FromAddress(IAddressSuggestionsRequest request, CancellationToken token = default)
+    public Task<IEnumerable<GooglePlacesGeocodeRecord>> FromAddress(IAddressSuggestionsRequest request, CancellationToken token = default)
     {
         throw new NotImplementedException();
     }
 
-    public Task<IEnumerable<GooglePlacesGeocodeResponse>> FromPoint(IReverseGeocodeRequest request, CancellationToken token = default)
+    public Task<IEnumerable<GooglePlacesGeocodeRecord>> FromPoint(IReverseGeocodeRequest request, CancellationToken token = default)
     {
         throw new NotImplementedException();
     }

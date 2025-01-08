@@ -1,6 +1,6 @@
 namespace BlazorGeospatial.Geocode.Client;
 
-public interface IGeocodeClient<TGeocodeResponse> where TGeocodeResponse: IGeocodeResponse
+public interface IGeocodeClient<TGeocodeResponse> where TGeocodeResponse: IGeocodeRecord
 {
     public Task<IEnumerable<TGeocodeResponse>> FromAddress(
         IAddressSuggestionsRequest request,

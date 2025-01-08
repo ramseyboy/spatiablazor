@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace SpatiaBlazor.Components.Validation;
 
-public class RequiredEnumerableAttribute : ValidationAttribute
+internal class RequiredEnumerableAttribute : ValidationAttribute
 {
     protected override ValidationResult? IsValid(object? value, ValidationContext validationContext)
     {

@@ -11,13 +11,13 @@ public sealed class PhotonGeocodeClient(
     IHttpClientFactory httpClientFactory,
     ILogger<PhotonGeocodeClient> logger,
     IOptions<PhotonGeocodeConfigurationOptions> options)
-    : IGeocodeClient<PhotonGeocodeResponse>
+    : IGeocodeClient<PhotonGeocodeRecord>
 {
     public const string HttpClientTag = "PhotonGeocodeClient";
 
     private string BaseUrl => options.Value.ApiUrl;
 
-    public async Task<IEnumerable<PhotonGeocodeResponse>> FromAddress(IAddressSuggestionsRequest request, CancellationToken token = default)
+    public async Task<IEnumerable<PhotonGeocodeRecord>> FromAddress(IAddressSuggestionsRequest request, CancellationToken token = default)
     {
         var httpClient = httpClientFactory.CreateClient(HttpClientTag);
         httpClient.BaseAddress = new Uri(BaseUrl);
@@ -49,14 +49,14 @@ public sealed class PhotonGeocodeClient(
                 {
                     try
                     {
-                        return PhotonGeocodeResponse.Create(feature);
+                        return new PhotonGeocodeRecord(feature);
                     }
                     catch (ArgumentException e)
                     {
                         if (request.IgnoreErrors)
                         {
                             logger.LogError(e, "Encountered error when parsing feature for query {q}", request.Query);
-                            return new PhotonGeocodeResponse
+                            return new PhotonGeocodeRecord
                             {
                                 IsValid = false
                             };
@@ -77,22 +77,9 @@ public sealed class PhotonGeocodeClient(
         return [];
     }
 
-    public async Task<IEnumerable<PhotonGeocodeResponse>> FromPoint(IReverseGeocodeRequest request, CancellationToken token = default)
+    public async Task<IEnumerable<PhotonGeocodeRecord>> FromPoint(IReverseGeocodeRequest request, CancellationToken token = default)
     {
-        var httpClient = httpClientFactory.CreateClient(HttpClientTag);
-        httpClient.BaseAddress = new Uri(BaseUrl);
-
-        var photonRequest = new PhotonReverseGeocodeRequest(request);
-
-        var results = await httpClient.GetFromJsonAsync<IEnumerable<IGeocodeResponse>>(
-            photonRequest.ToRequestPath(),
-            new JsonSerializerOptions
-            {
-                Converters = {new NetTopologySuite.IO.Converters.GeoJsonConverterFactory()}
-            },
-            cancellationToken: token);
-
-        //todo
+        //todo implement reverse
         return [];
     }
 }

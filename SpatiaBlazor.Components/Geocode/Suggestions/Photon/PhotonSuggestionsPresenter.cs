@@ -3,7 +3,7 @@ using SpatiaBlazor.Geocode.Photon;
 
 namespace SpatiaBlazor.Components.Geocode.Suggestions.Photon;
 
-public class PhotonSuggestionsPresenter(IGeocodeClient<PhotonGeocodeResponse> suggestionsClient): ISuggestionsPresenter
+public class PhotonSuggestionsPresenter(IGeocodeClient<PhotonGeocodeRecord> suggestionsClient) : ISuggestionsPresenter
 {
     private ISuggestionsView? _view;
 
@@ -42,11 +42,6 @@ public class PhotonSuggestionsPresenter(IGeocodeClient<PhotonGeocodeResponse> su
         return suggestions
             .Select(x => new PhotonGeocodeResultsViewModel(x))
             .ToList();
-    }
-
-    public Task<IEnumerable<IGeocodeResultsViewModel>> PointLookupSuggestions(string query, CancellationToken token)
-    {
-        throw new NotImplementedException();
     }
 
     public void Dispose()

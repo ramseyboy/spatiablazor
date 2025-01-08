@@ -16,8 +16,7 @@ public static class PhotonGeocodeExtensions
 
         //todo use poly and http resilience
         services.AddHttpClient(PhotonGeocodeClient.HttpClientTag);
-        services.Add(new ServiceDescriptor(typeof(IGeocodeClient<PhotonGeocodeResponse>), typeof(PhotonGeocodeClient), serviceLifetime));
-        services.Add(new ServiceDescriptor(typeof(PhotonGeocodeClient), typeof(PhotonGeocodeClient), serviceLifetime));
+        services.Add(new ServiceDescriptor(typeof(IGeocodeClient<PhotonGeocodeRecord>), typeof(PhotonGeocodeClient), serviceLifetime));
         return services;
     }
 }

@@ -1,10 +1,9 @@
 using Microsoft.Extensions.DependencyInjection;
-using SpatiaBlazor.Components.Geocode.Suggestions.Photon;
 using SpatiaBlazor.Geocode.Photon;
 
-namespace SpatiaBlazor.Components.Geocode.Suggestions;
+namespace SpatiaBlazor.Components.Geocode.Suggestions.Photon;
 
-public static class AddressSuggestionsExtensions
+public static class PhotonSuggestionsExtensions
 {
     public static IServiceCollection AddPhotonAddressSuggestionsComponent(
         this IServiceCollection services,

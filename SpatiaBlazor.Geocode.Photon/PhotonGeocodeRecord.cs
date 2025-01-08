@@ -5,7 +5,7 @@ using NetTopologySuite.Geometries;
 
 namespace SpatiaBlazor.Geocode.Photon;
 
-public record PhotonGeocodeResponse: IGeocodeResponse
+public record PhotonGeocodeRecord: IGeocodeRecord
 {
     //unused for now
     private const string OsmIdAttribute = "osm_id";
@@ -27,7 +27,12 @@ public record PhotonGeocodeResponse: IGeocodeResponse
     private const string LocalityAttribute = "locality";
     private const string CountyAttribute = "county";
 
-    public static PhotonGeocodeResponse Create(IFeature feature)
+    public PhotonGeocodeRecord()
+    {
+
+    }
+
+    public PhotonGeocodeRecord(IFeature feature)
     {
         if (feature.Geometry is null || feature.Geometry.IsEmpty || feature.Attributes is null)
         {
@@ -80,23 +85,20 @@ public record PhotonGeocodeResponse: IGeocodeResponse
             }
         }
 
-        return new PhotonGeocodeResponse
-        {
-            Id = id,
-            Geom = feature.Geometry,
-            BoundingBox = boundingBox,
-            Name = attr.GetOptionalValue(NameAttribute)?.ToString(),
-            Street = attr.GetOptionalValue(StreetAttribute)?.ToString(),
-            HouseNumber = attr.GetOptionalValue(HouseNumberAttribute)?.ToString(),
-            City = attr.GetOptionalValue(CityAttribute)?.ToString(),
-            StateOrProvince = attr.GetOptionalValue(StateAttribute)?.ToString(),
-            Country = attr.GetOptionalValue(CountryAttribute)?.ToString(),
-            CountryCode = attr.GetOptionalValue(CountryCodeAttribute)?.ToString(),
-            ZipOrPostCode = attr.GetOptionalValue(PostCodeAttribute)?.ToString(),
-            Locality = attr.GetOptionalValue(LocalityAttribute)?.ToString(),
-            CountyOrRegion = attr.GetOptionalValue(CountyAttribute)?.ToString(),
-            Types = typeSet
-        };
+        Id = id;
+        Geom = feature.Geometry;
+        BoundingBox = boundingBox;
+        Name = attr.GetOptionalValue(NameAttribute)?.ToString();
+        Street = attr.GetOptionalValue(StreetAttribute)?.ToString();
+        HouseNumber = attr.GetOptionalValue(HouseNumberAttribute)?.ToString();
+        City = attr.GetOptionalValue(CityAttribute)?.ToString();
+        StateOrProvince = attr.GetOptionalValue(StateAttribute)?.ToString();
+        Country = attr.GetOptionalValue(CountryAttribute)?.ToString();
+        CountryCode = attr.GetOptionalValue(CountryCodeAttribute)?.ToString();
+        ZipOrPostCode = attr.GetOptionalValue(PostCodeAttribute)?.ToString();
+        Locality = attr.GetOptionalValue(LocalityAttribute)?.ToString();
+        CountyOrRegion = attr.GetOptionalValue(CountyAttribute)?.ToString();
+        Types = typeSet;
     }
 
     public string Id { get; set; }

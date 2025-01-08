@@ -3,7 +3,7 @@ using NetTopologySuite.Geometries;
 
 namespace SpatiaBlazor.Geocode.Google;
 
-public class GooglePlacesGeocodeResponse: IGeocodeResponse
+public class GooglePlacesGeocodeRecord: IGeocodeRecord
 {
     public string Id { get; set; }
     public Geometry Geom { get; set; }
