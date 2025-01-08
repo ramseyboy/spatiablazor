@@ -31,4 +31,4 @@ jobs:
           dotnet pack ./*.sln --configuration Release /p:Version=${VERSION} --output pack/
       - name: 'Publish Nuget Package'
         run: dotnet nuget push pack/**.nupkg -s https://api.nuget.org/v3/index.json --api-key ${{secrets.NUGET_API_KEY}}
-        if: ${{github.event_name != 'pull_request' && github.ref_type == 'tag'}}  
+        if: ${{github.event_name != 'pull_request'}}  
