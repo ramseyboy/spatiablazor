@@ -1,7 +1,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using SpatiaBlazor.Geocode.Photon;
 
-namespace SpatiaBlazor.Components.Geocode.Suggestions.Photon;
+namespace SpatiaBlazor.Components.Address.Suggestions.Photon;
 
 public static class PhotonSuggestionsExtensions
 {

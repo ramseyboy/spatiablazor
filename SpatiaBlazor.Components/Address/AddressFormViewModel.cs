@@ -1,9 +1,9 @@
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
-using SpatiaBlazor.Components.Geocode.Suggestions;
+using SpatiaBlazor.Components.Address.Suggestions;
 using SpatiaBlazor.Components.Mixins;
 
-namespace SpatiaBlazor.Components.Geocode;
+namespace SpatiaBlazor.Components.Address;
 
 public record AddressFormViewModel: IViewModelMixin
 {

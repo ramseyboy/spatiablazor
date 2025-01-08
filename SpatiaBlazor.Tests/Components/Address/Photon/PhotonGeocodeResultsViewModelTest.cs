@@ -1,9 +1,9 @@
 using NetTopologySuite.Geometries;
-using SpatiaBlazor.Components.Geocode.Suggestions.Label;
-using SpatiaBlazor.Components.Geocode.Suggestions.Photon;
+using SpatiaBlazor.Components.Address.Suggestions.Label;
+using SpatiaBlazor.Components.Address.Suggestions.Photon;
 using SpatiaBlazor.Geocode.Photon;
 
-namespace SpatiaBlazor.Tests.Components.Geocode.Photon;
+namespace SpatiaBlazor.Tests.Components.Address.Photon;
 
 public class PhotonGeocodeResultsViewModelTest
 {

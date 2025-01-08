@@ -1,9 +1,8 @@
-using BlazorGeospatial.Geocode.Client;
 using NetTopologySuite.Geometries;
-using SpatiaBlazor.Components.Geocode.Suggestions.Label;
+using SpatiaBlazor.Components.Address.Suggestions.Label;
 using SpatiaBlazor.Geocode.Photon;
 
-namespace SpatiaBlazor.Components.Geocode.Suggestions.Photon;
+namespace SpatiaBlazor.Components.Address.Suggestions.Photon;
 
 public sealed record PhotonGeocodeResultsViewModel : IGeocodeResultsViewModel
 {

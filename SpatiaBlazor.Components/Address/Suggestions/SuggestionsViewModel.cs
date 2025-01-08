@@ -1,6 +1,6 @@
 using NetTopologySuite.Geometries;
 
-namespace SpatiaBlazor.Components.Geocode.Suggestions;
+namespace SpatiaBlazor.Components.Address.Suggestions;
 
 public class SuggestionsViewModel
 {

@@ -1,9 +1,8 @@
-using System.ComponentModel.DataAnnotations;
 using System.Reflection;
 using System.Text;
 using BlazorGeospatial.Geocode.Client;
 
-namespace SpatiaBlazor.Components.Geocode.Suggestions.Label;
+namespace SpatiaBlazor.Components.Address.Suggestions.Label;
 
 internal sealed class DefaultAddressLabelFactory: IAddressLabelFactory
 {

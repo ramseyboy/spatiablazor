@@ -1,6 +1,6 @@
 using SpatiaBlazor.Components.Mixins;
 
-namespace SpatiaBlazor.Components.Geocode;
+namespace SpatiaBlazor.Components.Address;
 
 public interface IAddressFormView : IViewMixin
 {

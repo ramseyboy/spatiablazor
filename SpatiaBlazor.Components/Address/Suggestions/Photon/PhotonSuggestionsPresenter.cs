@@ -1,7 +1,7 @@
 using BlazorGeospatial.Geocode.Client;
 using SpatiaBlazor.Geocode.Photon;
 
-namespace SpatiaBlazor.Components.Geocode.Suggestions.Photon;
+namespace SpatiaBlazor.Components.Address.Suggestions.Photon;
 
 public class PhotonSuggestionsPresenter(IGeocodeClient<PhotonGeocodeRecord> suggestionsClient) : ISuggestionsPresenter
 {

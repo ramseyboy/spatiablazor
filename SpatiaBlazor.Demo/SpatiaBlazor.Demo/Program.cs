@@ -1,8 +1,7 @@
 using SpatiaBlazor.Demo.Client.Pages;
 using SpatiaBlazor.Demo.Components;
 using MudBlazor.Services;
-using SpatiaBlazor.Components.Geocode.Suggestions;
-using SpatiaBlazor.Components.Geocode.Suggestions.Photon;
+using SpatiaBlazor.Components.Address.Suggestions.Photon;
 
 var builder = WebApplication.CreateBuilder(args);
 

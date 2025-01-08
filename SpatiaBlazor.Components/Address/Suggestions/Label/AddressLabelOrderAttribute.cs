@@ -1,4 +1,4 @@
-namespace SpatiaBlazor.Components.Geocode.Suggestions.Label;
+namespace SpatiaBlazor.Components.Address.Suggestions.Label;
 
 internal class AddressLabelOrderAttribute: Attribute
 {

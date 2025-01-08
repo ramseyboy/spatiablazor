@@ -1,11 +1,11 @@
 using Bunit;
 using FakeItEasy;
 using MudBlazor.Services;
-using SpatiaBlazor.Components.Geocode.Suggestions;
-using SpatiaBlazor.Components.Geocode.Suggestions.Photon;
+using SpatiaBlazor.Components.Address.Suggestions;
+using SpatiaBlazor.Components.Address.Suggestions.Photon;
 using Xunit.Abstractions;
 
-namespace SpatiaBlazor.Tests.Components.Geocode;
+namespace SpatiaBlazor.Tests.Components.Address;
 
 public class MudAddressSuggestionsComponentTest(ITestOutputHelper testOutputHelper) : TestContext, IAsyncLifetime
 {

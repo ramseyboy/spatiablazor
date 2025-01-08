@@ -1,7 +1,7 @@
 using BlazorGeospatial.Geocode.Client;
-using SpatiaBlazor.Components.Geocode.Suggestions.Label;
+using SpatiaBlazor.Components.Address.Suggestions.Label;
 
-namespace SpatiaBlazor.Tests.Components.Geocode.Label;
+namespace SpatiaBlazor.Tests.Components.Address.Label;
 
 public class AddressLabelFactoryTest
 {

@@ -1,9 +1,8 @@
 using BlazorGeospatial.Geocode.Client;
 using NetTopologySuite.Geometries;
-using SpatiaBlazor.Components.Geocode.Suggestions.Label;
 using SpatiaBlazor.Components.Mixins;
 
-namespace SpatiaBlazor.Components.Geocode.Suggestions;
+namespace SpatiaBlazor.Components.Address.Suggestions;
 
 public interface IGeocodeResultsViewModel: IViewModelMixin, IAddressRecord
 {

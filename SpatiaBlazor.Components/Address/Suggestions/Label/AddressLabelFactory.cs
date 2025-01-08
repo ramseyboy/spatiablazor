@@ -1,6 +1,6 @@
 using BlazorGeospatial.Geocode.Client;
 
-namespace SpatiaBlazor.Components.Geocode.Suggestions.Label;
+namespace SpatiaBlazor.Components.Address.Suggestions.Label;
 
 public interface IAddressLabelFactory
 {
