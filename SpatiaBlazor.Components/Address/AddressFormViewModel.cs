@@ -15,7 +15,14 @@ public record AddressFormViewModel: IViewModelMixin
     public AddressFormViewModel(IGeocodeResultsViewModel geocode)
     {
         Id = geocode.Id;
-        Address1 = $"{geocode.HouseNumber} {geocode.Street}";
+        if (geocode.Name is not null)
+        {
+            Address1 = $"{geocode.Name}, {geocode.Street}";
+        }
+        else
+        {
+            Address1 = $"{geocode.HouseNumber} {geocode.Street}";
+        }
         City = geocode.City;
         StateOrProvince = geocode.StateOrProvince;
         Country = geocode.CountryCode;
