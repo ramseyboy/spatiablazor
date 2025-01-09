@@ -1,5 +1,5 @@
-using BlazorGeospatial.Geocode.Client;
 using SpatiaBlazor.Components.Address.Suggestions.Label;
+using SpatiaBlazor.Geocode.Abstractions;
 
 namespace SpatiaBlazor.Tests.Components.Address.Label;
 

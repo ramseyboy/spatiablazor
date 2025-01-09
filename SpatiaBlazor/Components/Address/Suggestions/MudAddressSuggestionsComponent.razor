@@ -1,0 +1,38 @@
+@inherits MudAutocomplete<IGeocodeResultsViewModel>
+@implements ISuggestionsView
+@implements IDisposable
+@inject ISuggestionsPresenter Presenter
+
+@{
+    base.BuildRenderTree(__builder);
+}
+
+@code {
+
+    private readonly CancellationTokenSource _cts = new ();
+    
+    public MudAddressSuggestionsComponent()
+    {
+        DebounceInterval = 600;
+        SearchFunc = async args => await Presenter.AutocompleteSuggestions(args, _cts.Token);
+        ToStringFunc = model => model?.Label;
+        MaxItems = null;
+        ShowProgressIndicator = true;
+    }
+
+    protected override Task OnInitializedAsync()
+    {
+        return Presenter.InitializeAsync(this, _cts.Token);
+    }
+
+    public void TriggerRender()
+    {
+        StateHasChanged();
+    }
+    
+    public void Dispose()
+    {
+        _cts.Cancel();
+        _cts.Dispose();
+    }
+}

@@ -17,7 +17,7 @@ public class ServiceCollectionHelpers
     {
         configuration ??= BaseConfiguration;
 
-        var serviceCollection = new ServiceCollection();
+        var serviceCollection = new Microsoft.Extensions.DependencyInjection.ServiceCollection();
         serviceCollection.AddSingleton(configuration);
 
         var loggerFactory = new XUnitLoggerFactory(testOutputHelper);
