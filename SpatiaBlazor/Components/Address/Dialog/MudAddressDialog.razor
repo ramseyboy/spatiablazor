@@ -1,0 +1,56 @@
+<MudDialog>
+    <DialogContent>
+        <div class="d-flex flex-grow-1 my-4 align-content-center">
+            <div Class="d-flex flex-grow-1 justify-start">
+                <MudIconButton OnClick="OnCloseClicked" Icon="@Icons.Material.Filled.Close" aria-label="close" Size="Size.Small"/>
+            </div>
+            <MudText Typo="Typo.h6">@Title</MudText>
+            <div Class="d-flex flex-grow-1 justify-end">
+                <MudButton Variant="Variant.Text" OnClick="OnSaveClicked">Save</MudButton>
+            </div>
+        </div>
+        <div class="pa-4">
+            <MudAddressComponent @ref="_form" @bind-Value="Value"></MudAddressComponent>
+        </div>
+    </DialogContent>
+</MudDialog>
+
+@code {
+    
+    [CascadingParameter]
+    private MudDialogInstance MudDialog { get; set; }
+    
+    [Parameter] public string Title { get; set; } = "Address";
+    
+    [Parameter] public AddressViewModel? Value { get; set; }
+    
+    private IAddressFormView? _form;
+    
+    protected override void OnInitialized()
+    {
+        MudDialog.Options.NoHeader = true;
+        MudDialog.SetOptions(MudDialog.Options);
+    }
+    
+    private void OnCloseClicked(MouseEventArgs? args = null)
+    {
+        Value?.Clear();
+        MudDialog.Close(DialogResult.Cancel());
+    }
+
+    private async Task OnSaveClicked(MouseEventArgs? args = null)
+    {
+        if (_form is null)
+        {
+            MudDialog.Close(DialogResult.Cancel());
+            return;
+        }
+        
+        await _form.TriggerFormValidation();
+
+        if (_form.IsFormValid())
+        {
+            MudDialog?.Close(DialogResult.Ok(Value));   
+        }
+    }
+}

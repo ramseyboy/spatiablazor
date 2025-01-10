@@ -1,0 +1,157 @@
+@using System.Linq.Expressions
+@using MudBlazor.Utilities
+@using SpatiaBlazor.Components.Address.Suggestions
+@using SpatiaBlazor.Components.Extensions
+@implements SpatiaBlazor.Components.Address.IAddressFormView
+@inherits MudComponentBase
+
+@{
+    base.BuildRenderTree(__builder);
+}
+
+@if (MudDialog is null)
+{
+    <div class="d-flex flex-grow-1 my-4">
+        <div Class="d-flex flex-grow-1 justify-start"></div>
+        <MudText Typo="Typo.h6">@Title</MudText>
+        <div Class="flex-grow-1 justify-start"></div>
+    </div>   
+}
+
+<MudAddressSuggestionsComponent
+    @ref="_suggestions"
+    AdornmentIcon="@Icons.Material.Filled.Search"
+    AdornmentAriaLabel="search"
+    ShrinkLabel="@ShrinkLabel"
+    Variant="SuggestionsVariant"
+    Clearable="Clearable"
+    OnClearButtonClick="OnClearClicked"
+    Value="_geocodeSelection"
+    ValueChanged="OnSelectionChanged"
+    Label="@SuggestionsLabel"/>
+
+<MudDivider Class="my-4"/>
+
+@if (ShowForm)
+{
+    <MudForm @ref="_form" FieldChanged="OnFormChanged">
+        @MudTextFragment(model => model.Address1, (model, s) => model.Address1 = s)
+
+        @MudTextFragment(model => model.Address2, (model, s) => model.Address2 = s)
+
+        @MudTextFragment(model => model.Address3, (model, s) => model.Address3 = s)
+
+        @MudTextFragment(model => model.City, (model, s) => model.City = s)
+
+        @MudTextFragment(model => model.StateOrProvince, (model, s) => model.StateOrProvince = s)
+
+        @MudTextFragment(model => model.Country, (model, s) => model.Country = s)
+
+        @MudTextFragment(model => model.ZipOrPostCode, (model, s) => model.ZipOrPostCode = s)
+
+        @MudTextFragment(model => model.OtherAddressDetails, (model, s) => model.OtherAddressDetails = s, autoGrow: true)
+    </MudForm>
+}
+
+@code {
+
+    [Parameter] public string Title { get; set; } = "Address";
+
+    [Parameter] public string SuggestionsLabel { get; set; } = "Search for address";
+
+    [Parameter] public Variant SuggestionsVariant { get; set; } = Variant.Outlined;
+
+    [Parameter] public bool Clearable { get; set; } = true;
+
+    [Parameter] public bool AllowEdit { get; set; } = true;
+
+    [Parameter] public bool ShowForm { get; set; } = true;
+
+    [Parameter] public Variant FormVariant { get; set; } = Variant.Text;
+
+    [Parameter] public bool ImmediateValidation { get; set; }
+
+    [Parameter] public bool ShrinkLabel { get; set; } = true;
+
+    [Parameter] public AddressViewModel? Value { get; set; }
+
+    [Parameter] public EventCallback<AddressViewModel> ValueChanged { get; set; }
+    
+    [CascadingParameter]
+    private MudDialogInstance? MudDialog { get; set; }
+
+    private IGeocodeResultsViewModel? _geocodeSelection;
+
+    private MudForm? _form;
+
+    private MudAutocomplete<IGeocodeResultsViewModel>? _suggestions;
+
+    private RenderFragment MudTextFragment<T>(Expression<Func<AddressViewModel, T>> propertyExpression, Action<AddressViewModel, T> setFunc, bool autoGrow = false) => __builder =>
+    {
+        @if (!propertyExpression.IsHidden())
+        {
+            <MudTextField T="T" Disabled="@(IsDisabled(propertyExpression))"
+                          Variant="@FormVariant"
+                          Immediate="@ImmediateValidation"
+                          ShrinkLabel="@ShrinkLabel"
+                          AutoGrow="autoGrow"
+                          Value="@(propertyExpression.Compile().Invoke(Value!))"
+                          ValueChanged="@(val => setFunc(Value!, val))"
+                          Label="@(propertyExpression.PropertyDisplay())"
+                          Validation="propertyExpression.PropertyValidation()"/>   
+        }
+    };
+
+    protected override void OnParametersSet()
+    {
+        Value ??= new AddressViewModel();
+        if (_geocodeSelection is null && _suggestions != null)
+        {
+            _suggestions.Text = Value.Label();
+        }
+    }
+
+    private async Task OnFormChanged(FormFieldChangedEventArgs args)
+    {
+        await ValueChanged.InvokeAsync(Value);
+    }
+
+    private async Task OnSelectionChanged(IGeocodeResultsViewModel selected)
+    {
+        Value?.UpdateFromGeocode(selected);
+        _geocodeSelection = selected;
+        await ValueChanged.InvokeAsync(Value);
+    }
+
+    public void TriggerRender()
+    {
+        StateHasChanged();
+    }
+
+    public bool IsFormValid()
+    {
+        return _form?.IsValid ?? false;
+    }
+
+    public async Task TriggerFormValidation()
+    {
+        if (_form is null)
+        {
+            return;
+        }
+
+        await _form.Validate();
+    }
+    
+    private async Task OnClearClicked(MouseEventArgs? args = null)
+    {
+        _suggestions?.Clear();
+        Value?.Clear();
+        await ValueChanged.InvokeAsync(Value);
+    }
+
+    private bool IsDisabled<T>(Expression<Func<AddressViewModel, T>> propertyExpression)
+    {
+        return !AllowEdit && !propertyExpression.IsEditable();
+    }
+}

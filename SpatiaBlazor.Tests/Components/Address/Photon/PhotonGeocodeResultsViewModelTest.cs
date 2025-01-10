@@ -1,6 +1,6 @@
 using NetTopologySuite.Geometries;
-using SpatiaBlazor.Components.Address.Suggestions.Label;
 using SpatiaBlazor.Components.Address.Suggestions.Photon;
+using SpatiaBlazor.Components.Attributes.Label;
 using SpatiaBlazor.Geocode.Photon;
 
 namespace SpatiaBlazor.Tests.Components.Address.Photon;
@@ -22,7 +22,7 @@ public class PhotonGeocodeResultsViewModelTest
             CountryCode = "US",
             Geom = new Point(0,0)
         };
-        var viewModel = new PhotonGeocodeResultsViewModel(response, new DefaultAddressLabelFactory());
+        var viewModel = new PhotonGeocodeResultsViewModel(response, new DefaultLabelFactory());
 
         Assert.NotNull(viewModel.Label);
         Assert.NotEmpty(viewModel.Label);

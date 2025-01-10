@@ -25,7 +25,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\SpatiaBlazor.Components\SpatiaBlazor.Components.csproj" />
+      <ProjectReference Include="..\SpatiaBlazor\SpatiaBlazor.csproj" />
     </ItemGroup>
 
 </Project>

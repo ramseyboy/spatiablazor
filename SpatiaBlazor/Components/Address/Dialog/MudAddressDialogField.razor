@@ -1,0 +1,43 @@
+@inherits MudField
+@inject IDialogService DialogService
+
+@{
+    base.BuildRenderTree(__builder);
+    
+    ChildContent= __builder =>
+    {
+        <div @onclick="OpenDialog" Class="cursor-pointer d-flex align-baseline align-content-stretch justify-space-between">
+            <MudText>@Value?.Label()</MudText>
+            <MudIconButton OnClick="OpenDialog" Icon="@Icons.Material.Filled.Map" aria-label="address" Size="Size.Small"/>
+        </div>
+    };
+}
+
+@code {
+    [Parameter] public AddressViewModel? Value { get; set; }
+    
+    [Parameter] public EventCallback<AddressViewModel> ValueChanged { get; set; }
+
+    private async Task OpenDialog(MouseEventArgs args)
+    {
+        var parameters = new DialogParameters<MudAddressDialog>
+        {
+            {x => x.Value, Value}
+        };
+
+        var options = new DialogOptions
+        {
+            FullWidth = true,
+            MaxWidth = MaxWidth.Medium
+        };
+
+        var dialog = await DialogService.ShowAsync<MudAddressDialog>(string.Empty, parameters, options);
+        var result = await dialog.Result;
+
+        if (!result.Canceled && result.Data is AddressViewModel model)
+        {
+            Value = model;
+            await ValueChanged.InvokeAsync(model);
+        }
+    }
+}
