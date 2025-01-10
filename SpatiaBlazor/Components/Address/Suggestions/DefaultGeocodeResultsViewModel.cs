@@ -1,13 +1,12 @@
 using NetTopologySuite.Geometries;
 using SpatiaBlazor.Components.Attributes.Label;
-using SpatiaBlazor.Geocode;
 using SpatiaBlazor.Geocode.Abstractions;
 
-namespace SpatiaBlazor.Components.Address.Suggestions.Photon;
+namespace SpatiaBlazor.Components.Address.Suggestions;
 
-internal sealed record PhotonGeocodeResultsViewModel : IGeocodeResultsViewModel
+internal sealed record DefaultGeocodeResultsViewModel : IGeocodeResultsViewModel
 {
-    public PhotonGeocodeResultsViewModel(IGeocodeRecord record, ILabelFactory? labelFactory = null)
+    public DefaultGeocodeResultsViewModel(IGeocodeRecord record, ILabelFactory? labelFactory = null)
     {
         labelFactory ??= new DefaultLabelFactory();
 

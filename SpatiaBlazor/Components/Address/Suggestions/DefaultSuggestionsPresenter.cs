@@ -1,10 +1,8 @@
-using SpatiaBlazor.Geocode;
 using SpatiaBlazor.Geocode.Abstractions;
-using SpatiaBlazor.Geocode.Photon;
 
-namespace SpatiaBlazor.Components.Address.Suggestions.Photon;
+namespace SpatiaBlazor.Components.Address.Suggestions;
 
-internal sealed class PhotonSuggestionsPresenter(IGeocodeClient suggestionsClient) : ISuggestionsPresenter
+internal sealed class DefaultSuggestionsPresenter(IGeocodeClient suggestionsClient) : ISuggestionsPresenter
 {
     private ISuggestionsView? _view;
 
@@ -41,7 +39,7 @@ internal sealed class PhotonSuggestionsPresenter(IGeocodeClient suggestionsClien
         };
         var suggestions = await suggestionsClient.FromAddress(request, token);
         return suggestions
-            .Select(x => new PhotonGeocodeResultsViewModel(x))
+            .Select(x => new DefaultGeocodeResultsViewModel(x))
             .ToList();
     }
 
