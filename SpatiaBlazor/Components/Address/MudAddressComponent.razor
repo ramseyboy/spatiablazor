@@ -105,6 +105,10 @@
     protected override void OnParametersSet()
     {
         Value ??= new AddressViewModel();
+        if (_geocodeSelection is null && _suggestions != null)
+        {
+            _suggestions.Text = Value.Label();
+        }
     }
 
     private async Task OnFormChanged(FormFieldChangedEventArgs args)

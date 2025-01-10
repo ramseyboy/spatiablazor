@@ -1,5 +1,5 @@
 using NetTopologySuite.Geometries;
-using SpatiaBlazor.Components.Address.Suggestions.Label;
+using SpatiaBlazor.Components.Attributes.Label;
 using SpatiaBlazor.Geocode;
 using SpatiaBlazor.Geocode.Abstractions;
 
@@ -7,9 +7,9 @@ namespace SpatiaBlazor.Components.Address.Suggestions.Photon;
 
 internal sealed record PhotonGeocodeResultsViewModel : IGeocodeResultsViewModel
 {
-    public PhotonGeocodeResultsViewModel(IGeocodeRecord record, IAddressLabelFactory? addressLabelFactory = null)
+    public PhotonGeocodeResultsViewModel(IGeocodeRecord record, ILabelFactory? labelFactory = null)
     {
-        addressLabelFactory ??= new DefaultAddressLabelFactory();
+        labelFactory ??= new DefaultLabelFactory();
 
         Id = record.Id ?? throw new ApplicationException(); //todo
         Name = record.Name;
@@ -26,7 +26,7 @@ internal sealed record PhotonGeocodeResultsViewModel : IGeocodeResultsViewModel
         BoundingBox = record.BoundingBox;
         Geom = record.Geom as Point ?? throw new ApplicationException(); //todo handle non point
 
-        Label = addressLabelFactory.Create(this);
+        Label = labelFactory.Create(this);
     }
 
     public object Id { get; }
@@ -34,19 +34,19 @@ internal sealed record PhotonGeocodeResultsViewModel : IGeocodeResultsViewModel
     public Envelope BoundingBox { get; set; }
     public string Label { get; set; }
 
-    [AddressLabelOrder(Order = 1, Delimiter = ",")]
+    [LabelOrder(Order = 1, Delimiter = ",")]
     public string? Name { get; set; }
-    [AddressLabelOrder(Order = 2, Delimiter = " ")]
+    [LabelOrder(Order = 2, Delimiter = " ")]
     public string? HouseNumber { get; set; }
-    [AddressLabelOrder(Order = 3, Delimiter = ",")]
+    [LabelOrder(Order = 3, Delimiter = ",")]
     public string? Street { get; set; }
-    [AddressLabelOrder(Order = 4, Delimiter = ",")]
+    [LabelOrder(Order = 4, Delimiter = ",")]
     public string? City { get; set; }
-    [AddressLabelOrder(Order = 5, Delimiter = ",")]
+    [LabelOrder(Order = 5, Delimiter = ",")]
     public string? StateOrProvince { get; set; }
-    [AddressLabelOrder(Order = 6, Delimiter = ",")]
+    [LabelOrder(Order = 6, Delimiter = ",")]
     public string? ZipOrPostCode { get; set; }
-    [AddressLabelOrder(Order = 7)]
+    [LabelOrder(Order = 7)]
     public string? CountryCode { get; set; }
     public string? Locality { get; set; }
     public string? CountyOrRegion { get; set; }

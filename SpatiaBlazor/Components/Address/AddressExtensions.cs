@@ -1,11 +1,19 @@
+using System.Formats.Tar;
 using NetTopologySuite.Geometries;
 using SpatiaBlazor.Components.Address.Suggestions;
+using SpatiaBlazor.Components.Attributes.Label;
 
 namespace SpatiaBlazor.Components.Address;
 
 internal static class AddressExtensions
 {
-    public static AddressViewModel UpdateFromGeocode(this AddressViewModel viewModel, IGeocodeResultsViewModel geocode)
+    public static string Label(this AddressViewModel viewModel, ILabelFactory? labelFactory = null)
+    {
+        labelFactory ??= new DefaultLabelFactory();
+        return labelFactory.Create(viewModel);
+    }
+
+    public static AddressViewModel UpdateFromGeocode(this AddressViewModel viewModel, IGeocodeResultsViewModel geocode, ILabelFactory? labelFactory = null)
     {
         if (geocode.Name is not null)
         {
@@ -19,7 +27,8 @@ internal static class AddressExtensions
         viewModel.StateOrProvince = geocode.StateOrProvince;
         viewModel.Country = geocode.CountryCode;
         viewModel.ZipOrPostCode = geocode.ZipOrPostCode;
-        viewModel.InnerViewModel = geocode;
+        viewModel.Geom = geocode.Geom;
+
         return viewModel;
     }
 
@@ -33,7 +42,7 @@ internal static class AddressExtensions
         viewModel.Country = string.Empty;
         viewModel.ZipOrPostCode = string.Empty;
         viewModel.OtherAddressDetails = null;
-        viewModel.InnerViewModel = null;
+        viewModel.Geom = Point.Empty;
         return viewModel;
     }
 }

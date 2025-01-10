@@ -1,6 +1,6 @@
-namespace SpatiaBlazor.Components.Address.Suggestions.Label;
+namespace SpatiaBlazor.Components.Attributes.Label;
 
-internal class AddressLabelOrderAttribute: Attribute
+internal class LabelOrderAttribute: Attribute
 {
     public required int Order { get; set; }
     public string? Delimiter { get; set; }

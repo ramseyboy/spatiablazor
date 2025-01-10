@@ -1,17 +1,16 @@
 using System.Reflection;
 using System.Text;
-using SpatiaBlazor.Geocode.Abstractions;
 
-namespace SpatiaBlazor.Components.Address.Suggestions.Label;
+namespace SpatiaBlazor.Components.Attributes.Label;
 
-internal sealed class DefaultAddressLabelFactory: IAddressLabelFactory
+internal sealed class DefaultLabelFactory: ILabelFactory
 {
-    public string Create(IAddressRecord record)
+    public string Create(object record)
     {
         var orderedProperties = record.GetType().GetProperties()
-            .Where(pi => pi.GetCustomAttribute<AddressLabelOrderAttribute>() is not null)
-            .Where(pi => pi.GetValue(record) is not null || pi.GetCustomAttribute<AddressLabelOrderAttribute>()!.FallbackLabel is not null)
-            .OrderBy(pi => pi.GetCustomAttribute<AddressLabelOrderAttribute>()!.Order)
+            .Where(pi => pi.GetCustomAttribute<LabelOrderAttribute>() is not null)
+            .Where(pi => pi.GetValue(record) is not null || pi.GetCustomAttribute<LabelOrderAttribute>()!.FallbackLabel is not null)
+            .OrderBy(pi => pi.GetCustomAttribute<LabelOrderAttribute>()!.Order)
             .ToList();
 
         var stringBuilder = new StringBuilder();
@@ -19,7 +18,7 @@ internal sealed class DefaultAddressLabelFactory: IAddressLabelFactory
         {
             var orderedProperty = orderedProperties[i];
 
-            var attr = orderedProperty.GetCustomAttribute<AddressLabelOrderAttribute>();
+            var attr = orderedProperty.GetCustomAttribute<LabelOrderAttribute>();
 
             var delimiter = attr!.Delimiter;
             var val = orderedProperty.GetValue(record)?.ToString();
