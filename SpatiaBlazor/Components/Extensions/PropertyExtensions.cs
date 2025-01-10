@@ -16,7 +16,7 @@ internal static class PropertyExtensions
         }
 
         var attr =  member.GetCustomAttribute<DisplayAttribute>();
-        return !attr?.AutoGenerateField ?? false;
+        return (attr?.GetAutoGenerateField() ?? true) == false;
     }
 
     internal static bool IsEditable<TSource, TProperty>(this Expression<Func<TSource, TProperty>> propertyExpression)
@@ -90,63 +90,5 @@ internal static class PropertyExtensions
         }
 
         return propInfo;
-    }
-
-    internal static bool IsHidden<T>(this T _, string propertyName)
-    {
-        if (typeof(T).GetProperty(propertyName) is not MemberInfo member)
-        {
-            return false;
-        }
-
-        var attr =  member.GetCustomAttribute<DisplayAttribute>();
-        return !attr?.AutoGenerateField ?? false;
-
-    }
-
-    internal static bool IsEditable<T>(this T _, string propertyName)
-    {
-        if (typeof(T).GetProperty(propertyName) is not MemberInfo member)
-        {
-            return false;
-        }
-
-        var attr =  member.GetCustomAttribute<EditableAttribute>();
-        return attr?.AllowEdit ?? false;
-
-    }
-
-    internal static bool IsRequired<T>(this T _, string propertyName)
-    {
-        if (typeof(T).GetProperty(propertyName) is not MemberInfo member)
-        {
-            return false;
-        }
-
-        return !Attribute.IsDefined(member, typeof(RequiredAttribute));
-
-    }
-
-    internal static string PropertyDisplay<T>(this T _, string propertyName)
-    {
-        if (typeof(T).GetProperty(propertyName) is not MemberInfo member)
-        {
-            return "";
-        }
-
-        var display = member.GetCustomAttributes(true)
-            .ToDictionary(a => a.GetType().Name, a => a)
-            [nameof(DisplayAttribute)] as DisplayAttribute;
-        return display?.Name ?? member.Name;
-    }
-
-    internal static ValidationAttribute PropertyValidation<T>(this T _, string propertyName)
-    {
-        var pi = typeof(T).GetProperty(propertyName);
-        if (pi is null)
-        {
-            throw new ArgumentException();
-        }
-        return new PropertyValidationAttribute<T>(pi);
     }
 }

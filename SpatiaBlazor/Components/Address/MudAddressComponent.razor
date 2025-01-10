@@ -49,7 +49,7 @@
 
         @MudTextFragment(model => model.ZipOrPostCode, (model, s) => model.ZipOrPostCode = s)
 
-        @MudTextFragment(model => model.OtherAddressDetails, (model, s) => model.OtherAddressDetails = s)
+        @MudTextFragment(model => model.OtherAddressDetails, (model, s) => model.OtherAddressDetails = s, autoGrow: true)
     </MudForm>
 }
 
@@ -86,16 +86,20 @@
 
     private MudAutocomplete<IGeocodeResultsViewModel>? _suggestions;
 
-    private RenderFragment MudTextFragment<T>(Expression<Func<AddressViewModel, T>> propertyExpression, Action<AddressViewModel, T> setFunc) => __builder =>
+    private RenderFragment MudTextFragment<T>(Expression<Func<AddressViewModel, T>> propertyExpression, Action<AddressViewModel, T> setFunc, bool autoGrow = false) => __builder =>
     {
-        <MudTextField T="T" Disabled="@(IsDisabled(propertyExpression))"
-                      Variant="@FormVariant"
-                      Immediate="@ImmediateValidation"
-                      ShrinkLabel="@ShrinkLabel"
-                      Value="@(propertyExpression.Compile().Invoke(Value!))"
-                      ValueChanged="@(val => setFunc(Value!, val))"
-                      Label="@(propertyExpression.PropertyDisplay())"
-                      Validation="propertyExpression.PropertyValidation()"/>
+        @if (!propertyExpression.IsHidden())
+        {
+            <MudTextField T="T" Disabled="@(IsDisabled(propertyExpression))"
+                          Variant="@FormVariant"
+                          Immediate="@ImmediateValidation"
+                          ShrinkLabel="@ShrinkLabel"
+                          AutoGrow="autoGrow"
+                          Value="@(propertyExpression.Compile().Invoke(Value!))"
+                          ValueChanged="@(val => setFunc(Value!, val))"
+                          Label="@(propertyExpression.PropertyDisplay())"
+                          Validation="propertyExpression.PropertyValidation()"/>   
+        }
     };
 
     protected override void OnParametersSet()
@@ -135,10 +139,11 @@
         await _form.Validate();
     }
     
-    private void OnClearClicked(MouseEventArgs? args = null)
+    private async Task OnClearClicked(MouseEventArgs? args = null)
     {
         _suggestions?.Clear();
         Value?.Clear();
+        await ValueChanged.InvokeAsync(Value);
     }
 
     private bool IsDisabled<T>(Expression<Func<AddressViewModel, T>> propertyExpression)

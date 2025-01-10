@@ -6,7 +6,7 @@
     
     ChildContent= __builder =>
     {
-        <div class="d-flex align-baseline align-content-stretch justify-space-between">
+        <div @onclick="OpenDialog" Class="cursor-pointer d-flex align-baseline align-content-stretch justify-space-between">
             <MudText>@Value?.InnerViewModel?.Label</MudText>
             <MudIconButton OnClick="OpenDialog" Icon="@Icons.Material.Filled.Map" aria-label="address" Size="Size.Small"/>
         </div>
