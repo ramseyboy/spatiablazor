@@ -7,10 +7,14 @@ public static class PhotonGeocodeExtensions
 {
     public static IServiceCollection AddPhotonGeocodeClient(
         this IServiceCollection services,
-        ServiceLifetime serviceLifetime = ServiceLifetime.Transient)
+        ServiceLifetime serviceLifetime = ServiceLifetime.Transient,
+        string? configSectionPath = null)
+
     {
+        var pathPrefix = configSectionPath is not null ? $"{configSectionPath}:" : string.Empty;
+        var path = $"{pathPrefix}SpatiaBlazor:Geocode:Photon";
         services.AddOptions<PhotonGeocodeConfigurationOptions>()
-            .BindConfiguration(PhotonGeocodeConfigurationOptions.OptionsPath)
+            .BindConfiguration(path)
             .ValidateDataAnnotations()
             .ValidateOnStart();
 
