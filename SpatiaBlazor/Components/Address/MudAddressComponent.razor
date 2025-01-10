@@ -118,9 +118,9 @@
 
     private async Task OnSelectionChanged(IGeocodeResultsViewModel selected)
     {
-        var updated = Value?.UpdateFromGeocode(selected);
+        Value?.UpdateFromGeocode(selected);
         _geocodeSelection = selected;
-        await ValueChanged.InvokeAsync(updated);
+        await ValueChanged.InvokeAsync(Value);
     }
 
     public void TriggerRender()

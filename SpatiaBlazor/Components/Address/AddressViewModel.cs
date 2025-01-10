@@ -7,7 +7,8 @@ namespace SpatiaBlazor.Components.Address;
 
 public record AddressViewModel
 {
-    public Point Geom { get; set; } = Point.Empty;
+    [Required(ErrorMessage = "Use address search to find a location")]
+    public Point? Geom { get; set; }
 
     [StringLength(256, ErrorMessage = "Address Line 1 must not exceed 256 characters.")]
     [Required(AllowEmptyStrings = false, ErrorMessage = "Address is required")]
