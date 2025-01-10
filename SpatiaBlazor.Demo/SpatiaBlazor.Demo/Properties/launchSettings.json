@@ -26,7 +26,9 @@
         "inspectUri": "{wsProtocol}://{url.hostname}:{url.port}/_framework/debug/ws-proxy?browser={browserInspectUri}",
         "applicationUrl": "https://localhost:7027;http://localhost:5200",
         "environmentVariables": {
-          "ASPNETCORE_ENVIRONMENT": "Development"
+          "ASPNETCORE_ENVIRONMENT": "Development",
+          "ASPNETCORE_CAPTURESTARTUPERRORS": "1",
+          "ASPNETCORE_DETAILEDERRORS": "1"
         }
       },
       "IIS Express": {
@@ -36,6 +38,20 @@
         "environmentVariables": {
           "ASPNETCORE_ENVIRONMENT": "Development"
         }
+      },
+      "watch": {
+        "commandName": "Executable",
+        "executablePath": "dotnet",
+        "commandLineArgs": "watch --non-interactive run",
+        "workingDirectory": "$(ProjectDir)",
+        "launchBrowser": true,
+        "environmentVariables": {
+          "ASPNETCORE_ENVIRONMENT": "Development",
+          "ASPNETCORE_CAPTURESTARTUPERRORS": "1",
+          "ASPNETCORE_DETAILEDERRORS": "1"
+        },
+        "dotnetRunMessages": true,
+        "applicationUrl": "https://localhost:7027;http://localhost:5200"
       }
     }
   }

@@ -24,13 +24,13 @@ internal sealed record PhotonGeocodeResultsViewModel : IGeocodeResultsViewModel
         ZipOrPostCode = record.ZipOrPostCode;
 
         BoundingBox = record.BoundingBox;
-        Location = record.Geom as Point ?? throw new ApplicationException(); //todo handle non point
+        Geom = record.Geom as Point ?? throw new ApplicationException(); //todo handle non point
 
         Label = addressLabelFactory.Create(this);
     }
 
     public object Id { get; }
-    public Point Location { get;}
+    public Point Geom { get;}
     public Envelope BoundingBox { get; set; }
     public string Label { get; set; }
 

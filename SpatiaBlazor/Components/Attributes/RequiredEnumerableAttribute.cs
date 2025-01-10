@@ -1,7 +1,7 @@
 using System.Collections;
 using System.ComponentModel.DataAnnotations;
 
-namespace SpatiaBlazor.Components.Validation;
+namespace SpatiaBlazor.Components.Attributes;
 
 internal class RequiredEnumerableAttribute : ValidationAttribute
 {

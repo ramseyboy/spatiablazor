@@ -1,15 +1,15 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Reflection;
 
-namespace SpatiaBlazor.Components.Validation;
+namespace SpatiaBlazor.Components.Attributes;
 
 internal class PropertyValidationAttribute<TModelType> : ValidationAttribute
 {
     private readonly List<ValidationAttribute> _validationAttributes;
 
-    public PropertyValidationAttribute(string propertyName)
+    public PropertyValidationAttribute(PropertyInfo pi)
     {
-        _validationAttributes = typeof(TModelType)
-            .GetProperty(propertyName)
+        _validationAttributes = pi
             .GetCustomAttributes(true)
             .Where(x => x.GetType().IsAssignableTo(typeof(ValidationAttribute)))
             .Select(x => x as ValidationAttribute ?? throw new InvalidOperationException())
