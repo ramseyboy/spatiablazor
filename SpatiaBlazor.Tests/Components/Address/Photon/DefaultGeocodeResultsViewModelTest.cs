@@ -1,11 +1,11 @@
 using NetTopologySuite.Geometries;
-using SpatiaBlazor.Components.Address.Suggestions.Photon;
+using SpatiaBlazor.Components.Address.Suggestions;
 using SpatiaBlazor.Components.Attributes.Label;
 using SpatiaBlazor.Geocode.Photon;
 
 namespace SpatiaBlazor.Tests.Components.Address.Photon;
 
-public class PhotonGeocodeResultsViewModelTest
+public class DefaultGeocodeResultsViewModelTest
 {
     [Fact(DisplayName = "Given a valid non empty structured address, When view model is created, Then label should match the address data")]
     public void TestLabelWithAllNull()
@@ -22,7 +22,7 @@ public class PhotonGeocodeResultsViewModelTest
             CountryCode = "US",
             Geom = new Point(0,0)
         };
-        var viewModel = new PhotonGeocodeResultsViewModel(response, new DefaultLabelFactory());
+        var viewModel = new DefaultGeocodeResultsViewModel(response, new DefaultLabelFactory());
 
         Assert.NotNull(viewModel.Label);
         Assert.NotEmpty(viewModel.Label);

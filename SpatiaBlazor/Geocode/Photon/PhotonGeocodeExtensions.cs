@@ -11,12 +11,16 @@ public static class PhotonGeocodeExtensions
         string? configSectionPath = null)
 
     {
-        var pathPrefix = configSectionPath is not null ? $"{configSectionPath}:" : string.Empty;
+        var pathPrefix = string.Empty;
+        if (configSectionPath is not null)
+        {
+            pathPrefix = !configSectionPath.EndsWith(':') ? $"{configSectionPath}:" : configSectionPath;
+        }
+
         var path = $"{pathPrefix}SpatiaBlazor:Geocode:Photon";
         services.AddOptions<PhotonGeocodeConfigurationOptions>()
             .BindConfiguration(path)
-            .ValidateDataAnnotations()
-            .ValidateOnStart();
+            .ValidateDataAnnotations();
 
         //todo use poly and http resilience
         services.AddHttpClient(PhotonGeocodeClient.HttpClientTag);

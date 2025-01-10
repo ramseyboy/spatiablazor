@@ -2,7 +2,6 @@ using Bunit;
 using FakeItEasy;
 using MudBlazor.Services;
 using SpatiaBlazor.Components.Address.Suggestions;
-using SpatiaBlazor.Components.Address.Suggestions.Photon;
 using Xunit.Abstractions;
 
 namespace SpatiaBlazor.Tests.Components.Address;
@@ -21,7 +20,7 @@ public class MudAddressSuggestionsComponentTest(ITestOutputHelper testOutputHelp
         }
 
         Services.AddMudServices();
-        Services.AddPhotonAddressSuggestionsComponent();
+        Services.AddAddressSuggestions();
         return Task.CompletedTask;
     }
 
