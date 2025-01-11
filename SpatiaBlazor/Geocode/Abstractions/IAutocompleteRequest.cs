@@ -2,7 +2,7 @@ using NetTopologySuite.Geometries;
 
 namespace SpatiaBlazor.Geocode.Abstractions;
 
-public interface IAddressSuggestionsRequest : IGeocodeRequest
+public interface IAutocompleteRequest : IGeocodeRequest
 {
     /// <summary>
     ///

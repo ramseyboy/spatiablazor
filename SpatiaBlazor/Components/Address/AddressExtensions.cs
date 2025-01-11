@@ -13,6 +13,12 @@ public static class AddressExtensions
         return labelFactory.Create(viewModel);
     }
 
+    public static string Label(this IGeocodeResultsViewModel viewModel, ILabelFactory? labelFactory = null)
+    {
+        labelFactory ??= new DefaultLabelFactory();
+        return labelFactory.Create(viewModel);
+    }
+
     internal static void UpdateFromGeocode(this AddressViewModel viewModel, IGeocodeResultsViewModel geocode, ILabelFactory? labelFactory = null)
     {
         if (geocode.Name is not null)

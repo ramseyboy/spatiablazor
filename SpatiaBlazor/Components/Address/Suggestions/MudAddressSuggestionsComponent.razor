@@ -15,7 +15,7 @@
     {
         DebounceInterval = 600;
         SearchFunc = async args => await Presenter.AutocompleteSuggestions(args, _cts.Token);
-        ToStringFunc = model => model?.Label;
+        ToStringFunc = model => model?.Label();
         MaxItems = null;
         ShowProgressIndicator = true;
     }

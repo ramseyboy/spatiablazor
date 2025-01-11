@@ -1,4 +1,5 @@
 using SpatiaBlazor.Geocode.Abstractions;
+using SpatiaBlazor.Geocode.Photon;
 
 namespace SpatiaBlazor.Components.Address.Suggestions;
 
@@ -16,13 +17,6 @@ internal sealed class DefaultSuggestionsPresenter(IGeocodeClient suggestionsClie
 
     public async Task<IEnumerable<IGeocodeResultsViewModel>> AutocompleteSuggestions(string query, CancellationToken token)
     {
-        //todo put request args into UI form and map for reverse lookup
-        //todo default extent as rect
-        //todo default extent as polygon
-        //todo allow drawing/picking points to use as bias (or center circle extent)
-        //todo allow drawing rect extent
-        //todo arcgis implementation along with google, photon and custom
-        //todo Map view for syep eligibilities/jobs that show distance, transit stops, roads, interest heatmap, schedule heatmap
         if (token.IsCancellationRequested)
         {
             return [];
@@ -33,7 +27,7 @@ internal sealed class DefaultSuggestionsPresenter(IGeocodeClient suggestionsClie
             return [];
         }
 
-        var request = new DefaultAddressSuggestionsGeocodeRequest
+        var request = new PhotonAutocompleteRequest
         {
             Query = query
         };

@@ -13,7 +13,7 @@ public sealed class GooglePlacesGeocodeClient(
 {
     public const string HttpClientTag = "GooglePlacesGeocodeService";
 
-    public Task<IEnumerable<IGeocodeRecord>> FromAddress(IAddressSuggestionsRequest request, CancellationToken token = default)
+    public Task<IEnumerable<IGeocodeRecord>> FromAddress(IAutocompleteRequest request, CancellationToken token = default)
     {
         throw new NotImplementedException();
     }

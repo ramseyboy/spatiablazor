@@ -20,6 +20,7 @@ public static class PhotonGeocodeExtensions
         var path = $"{pathPrefix}SpatiaBlazor:Geocode:Photon";
         services.AddOptions<PhotonGeocodeConfigurationOptions>()
             .BindConfiguration(path)
+            .ValidateOnStart()
             .ValidateDataAnnotations();
 
         //todo use poly and http resilience

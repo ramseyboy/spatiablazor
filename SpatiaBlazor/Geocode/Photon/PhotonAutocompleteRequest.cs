@@ -5,13 +5,13 @@ using SpatiaBlazor.Geocode.Abstractions;
 
 namespace SpatiaBlazor.Geocode.Photon;
 
-public record PhotonAddressSuggestionsGeocodeRequest : IAddressSuggestionsRequest, IPhotonRequestMixin
+public record PhotonAutocompleteRequest : IAutocompleteRequest, IPhotonRequestMixin
 {
-    public PhotonAddressSuggestionsGeocodeRequest()
+    public PhotonAutocompleteRequest()
     {
     }
 
-    public PhotonAddressSuggestionsGeocodeRequest(IAddressSuggestionsRequest request)
+    public PhotonAutocompleteRequest(IAutocompleteRequest request)
     {
         Query = request.Query;
     }
