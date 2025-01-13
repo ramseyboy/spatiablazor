@@ -1,4 +1,5 @@
 using NetTopologySuite.Geometries;
+using SpatiaBlazor.Components.Address;
 using SpatiaBlazor.Components.Address.Suggestions;
 using SpatiaBlazor.Components.Attributes.Label;
 using SpatiaBlazor.Geocode.Photon;
@@ -22,10 +23,10 @@ public class DefaultGeocodeResultsViewModelTest
             CountryCode = "US",
             Geom = new Point(0,0)
         };
-        var viewModel = new DefaultGeocodeResultsViewModel(response, new DefaultLabelFactory());
+        var viewModel = new DefaultGeocodeResultsViewModel(response);
 
-        Assert.NotNull(viewModel.Label);
-        Assert.NotEmpty(viewModel.Label);
-        Assert.Equal($"{viewModel.Name}, {viewModel.HouseNumber} {viewModel.Street}, {viewModel.City}, {viewModel.StateOrProvince}, {viewModel.ZipOrPostCode}, {viewModel.CountryCode}", viewModel.Label);
+        Assert.NotNull(viewModel.Label());
+        Assert.NotEmpty(viewModel.Label());
+        Assert.Equal($"{viewModel.Name}, {viewModel.HouseNumber} {viewModel.Street}, {viewModel.City}, {viewModel.StateOrProvince}, {viewModel.ZipOrPostCode}, {viewModel.CountryCode}", viewModel.Label());
     }
 }

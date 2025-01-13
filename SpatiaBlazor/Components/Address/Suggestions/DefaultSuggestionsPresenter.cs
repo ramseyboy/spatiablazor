@@ -1,4 +1,5 @@
 using SpatiaBlazor.Geocode.Abstractions;
+using SpatiaBlazor.Validation;
 
 namespace SpatiaBlazor.Components.Address.Suggestions;
 
@@ -6,38 +7,38 @@ internal sealed class DefaultSuggestionsPresenter(IGeocodeClient suggestionsClie
 {
     private ISuggestionsView? _view;
 
-    public SuggestionsViewModel ViewModel { get; set; } = new();
-
+    /// <inheritdoc />>
     public Task InitializeAsync(ISuggestionsView view, CancellationToken cancellationToken = default)
     {
         _view = view;
         return Task.CompletedTask;
     }
 
-    public async Task<IEnumerable<IGeocodeResultsViewModel>> AutocompleteSuggestions(string query, CancellationToken token)
+    /// <inheritdoc />>
+    public async Task<IEnumerable<IGeocodeResultsViewModel>> AutocompleteSuggestions(CancellationToken token)
     {
-        //todo put request args into UI form and map for reverse lookup
-        //todo default extent as rect
-        //todo default extent as polygon
-        //todo allow drawing/picking points to use as bias (or center circle extent)
-        //todo allow drawing rect extent
-        //todo arcgis implementation along with google, photon and custom
-        //todo Map view for syep eligibilities/jobs that show distance, transit stops, roads, interest heatmap, schedule heatmap
         if (token.IsCancellationRequested)
         {
             return [];
         }
 
-        if (string.IsNullOrEmpty(query))
+        if (_view is null)
         {
             return [];
         }
 
-        var request = new DefaultAddressSuggestionsGeocodeRequest
+        var viewModel = _view.SuggestionsParametersValue;
+
+        var validator = new ComponentModelValidator();
+        var validationResults = validator.Validate(viewModel);
+
+        if (validationResults.Count != 0)
         {
-            Query = query
-        };
-        var suggestions = await suggestionsClient.FromAddress(request, token);
+            throw new InvalidSuggestionsParameterException($"Invalid parameters {validationResults.ToParameterList()}, cannot fetch suggestions",
+                validationResults.ToDictionary());
+        }
+
+        var suggestions = await suggestionsClient.FromAddress(_view.SuggestionsParametersValue, token);
         return suggestions
             .Select(x => new DefaultGeocodeResultsViewModel(x))
             .ToList();

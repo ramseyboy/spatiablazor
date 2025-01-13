@@ -6,10 +6,8 @@ namespace SpatiaBlazor.Components.Address.Suggestions;
 
 internal sealed record DefaultGeocodeResultsViewModel : IGeocodeResultsViewModel
 {
-    public DefaultGeocodeResultsViewModel(IGeocodeRecord record, ILabelFactory? labelFactory = null)
+    public DefaultGeocodeResultsViewModel(IGeocodeRecord record)
     {
-        labelFactory ??= new DefaultLabelFactory();
-
         Id = record.Id ?? throw new ApplicationException(); //todo
         Name = record.Name;
         Street = record.Street;
@@ -24,14 +22,11 @@ internal sealed record DefaultGeocodeResultsViewModel : IGeocodeResultsViewModel
 
         BoundingBox = record.BoundingBox;
         Geom = record.Geom as Point ?? throw new ApplicationException(); //todo handle non point
-
-        Label = labelFactory.Create(this);
     }
 
     public object Id { get; }
     public Point Geom { get;}
     public Envelope BoundingBox { get; set; }
-    public string Label { get; set; }
 
     [LabelOrder(Order = 1, Delimiter = ",")]
     public string? Name { get; set; }

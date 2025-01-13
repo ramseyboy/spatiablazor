@@ -5,7 +5,7 @@ using SpatiaBlazor.Geocode.Abstractions;
 
 namespace SpatiaBlazor.Geocode.Photon;
 
-public record PhotonReverseGeocodeRequest: IReverseGeocodeRequest, IPhotonRequestMixin
+public record PhotonReverseGeocodeRequest: IReverseGeocodeRequest, IGeocodeRequest
 {
     public PhotonReverseGeocodeRequest()
     {
@@ -27,20 +27,28 @@ public record PhotonReverseGeocodeRequest: IReverseGeocodeRequest, IPhotonReques
     /// </summary>
     public double? Radius { get; set; }
 
-    /// <inheritdoc />>
+    /// <summary>
+    ///
+    /// </summary>
     public int Limit { get; set; }
 
     /// <inheritdoc />>
     public string? Language { get; set; }
 
-    /// <inheritdoc />>
-    public ISet<string> LayerFilters { get; set; } = ImmutableHashSet<string>.Empty;
+    /// <summary>
+    ///
+    /// </summary>
+    public ISet<string> TypeFilters { get; set; } = ImmutableHashSet<string>.Empty;
 
-    /// <inheritdoc />>
+    /// <summary>
+    ///
+    /// </summary>
     public IDictionary<string, string> OsmTagFilters { get; set; } = ImmutableDictionary<string, string>.Empty;
 
     public string ToRequestPath()
     {
         return $"reverse?lon={Location.X}&lat={Location.Y}";
     }
+
+    public Uri Uri { get; }
 }

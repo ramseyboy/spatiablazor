@@ -17,12 +17,13 @@ public sealed class PhotonGeocodeClient(
 
     private string BaseUrl => options.Value.ApiUrl;
 
-    public async Task<IEnumerable<IGeocodeRecord>> FromAddress(IAddressSuggestionsRequest request, CancellationToken token = default)
+    public async Task<IEnumerable<IGeocodeRecord>> FromAddress(IAutocompleteRequest request, CancellationToken token = default)
     {
         var httpClient = httpClientFactory.CreateClient(HttpClientTag);
         httpClient.BaseAddress = new Uri(BaseUrl);
 
-        var photonRequest = new PhotonAddressSuggestionsGeocodeRequest(request);
+        var photonRequest = new PhotonAutocompleteRequest(request);
+        //todo: validation of photon specific parameter values
 
         try
         {
