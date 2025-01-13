@@ -1,5 +1,6 @@
 @inherits MudAutocomplete<IGeocodeResultsViewModel>
 @implements ISuggestionsView
+@using SpatiaBlazor.Components.Extensions
 @implements IDisposable
 @inject ISuggestionsPresenter Presenter
 
@@ -9,25 +10,41 @@
 
 @code {
 
-    private readonly CancellationTokenSource _cts = new ();
+    [Parameter] public AddressSuggestionsParametersViewModel? SuggestionsParametersValue { get; set; }
     
-    public MudAddressSuggestionsComponent()
-    {
-        DebounceInterval = 600;
-        SearchFunc = async args => await Presenter.AutocompleteSuggestions(args, _cts.Token);
-        ToStringFunc = model => model?.Label();
-        MaxItems = null;
-        ShowProgressIndicator = true;
-    }
+    private readonly CancellationTokenSource _cts = new ();
 
     protected override Task OnInitializedAsync()
     {
         return Presenter.InitializeAsync(this, _cts.Token);
     }
 
+    protected override void OnParametersSet()
+    {
+        SuggestionsParametersValue ??= new AddressSuggestionsParametersViewModel();
+        DebounceInterval = SuggestionsParametersValue.DebounceInterval;
+        MinCharacters = SuggestionsParametersValue.MinQueryLength;
+        SearchFunc = async args => await OnSearch(args);
+        ToStringFunc = model => model?.Label();
+        MaxItems = SuggestionsParametersValue.Limit;
+        ShowProgressIndicator = true;
+        Label = PropertyExtensions.PropertyDisplay<AddressSuggestionsParametersViewModel, string>(model => model.Query);
+        Validation = PropertyExtensions.PropertyValidation<AddressSuggestionsParametersViewModel, string>(model => model.Query);
+    }
+
     public void TriggerRender()
     {
         StateHasChanged();
+    }
+
+    private async Task<IEnumerable<IGeocodeResultsViewModel>> OnSearch(string query)
+    {
+        if (SuggestionsParametersValue is null)
+        {
+            return Array.Empty<IGeocodeResultsViewModel>();
+        }
+        SuggestionsParametersValue.Query = query;
+        return await Presenter.AutocompleteSuggestions(_cts.Token);
     }
     
     public void Dispose()

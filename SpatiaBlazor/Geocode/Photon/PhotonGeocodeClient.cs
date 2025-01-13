@@ -23,6 +23,7 @@ public sealed class PhotonGeocodeClient(
         httpClient.BaseAddress = new Uri(BaseUrl);
 
         var photonRequest = new PhotonAutocompleteRequest(request);
+        //todo: validation of photon specific parameter values
 
         try
         {

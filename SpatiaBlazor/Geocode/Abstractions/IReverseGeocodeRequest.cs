@@ -2,7 +2,7 @@ using NetTopologySuite.Geometries;
 
 namespace SpatiaBlazor.Geocode.Abstractions;
 
-public interface IReverseGeocodeRequest: IGeocodeRequest
+public interface IReverseGeocodeRequest
 {
     /// <summary>
     ///

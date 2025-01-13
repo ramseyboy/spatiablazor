@@ -2,7 +2,7 @@ using NetTopologySuite.Geometries;
 
 namespace SpatiaBlazor.Geocode.Abstractions;
 
-public interface IAutocompleteRequest : IGeocodeRequest
+public interface IAutocompleteRequest
 {
     /// <summary>
     ///
@@ -17,12 +17,32 @@ public interface IAutocompleteRequest : IGeocodeRequest
     /// <summary>
     ///
     /// </summary>
-    public Envelope? BBox { get; set; }
+    public Envelope? BoundingBox { get; set; }
 
     /// <summary>
     ///
     /// </summary>
     public string? Language { get; set; }
+
+    /// <summary>
+    /// OSM layers types or google autocomplete types
+    /// </summary>
+    public ISet<string> TypeFilters { get; set; }
+
+    /// <summary>
+    /// limit results
+    /// </summary>
+    public int? Limit { get; set; }
+
+    /// <summary>
+    ///
+    /// </summary>
+    public double? Zoom { get; set; }
+
+    /// <summary>
+    ///
+    /// </summary>
+    public int? Scale { get; set; }
 
     /// <summary>
     /// Ignore features that cause errors during parsing of response, defaults to true.

@@ -61,4 +61,10 @@ public record AddressViewModel
     [Display(Name = "Other Address Details")]
     [Editable(true)]
     public virtual string? OtherAddressDetails { get; set; }
+
+    /// <summary>
+    /// Used to set default values for the address suggestions search parameters, i.e. Bounding box, bias location, filters, language.
+    /// If this is not set the AddressSuggestionsComponent will use the default.
+    /// </summary>
+    public AddressSuggestionsParametersViewModel? SuggestionsParameters { get; set; }
 }

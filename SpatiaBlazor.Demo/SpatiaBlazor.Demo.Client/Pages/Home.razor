@@ -1,6 +1,8 @@
 ﻿@page "/"
+@using NetTopologySuite.Geometries
 @using SpatiaBlazor.Components.Address
 @using SpatiaBlazor.Components.Address.Dialog
+@using SpatiaBlazor.Components.Address.Suggestions
 
 <MudText Class="my-4">Selected: @_model?.ToString()</MudText>
 
@@ -17,5 +19,13 @@
 
 @code
 {
-    private AddressViewModel? _model;
+    private AddressViewModel? _model = new AddressViewModel
+    {
+        SuggestionsParameters = new AddressSuggestionsParametersViewModel
+        {
+            BoundingBox = new Envelope(-106.6168,-93.5074,25.8419,36.5008),
+            BiasLocation = new Point(-97.733330, 30.266666),
+            TypeFilters = new HashSet<string>{"house"}
+        }
+    };
 }
