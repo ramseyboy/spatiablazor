@@ -28,6 +28,10 @@
     
     [Parameter] public ValidationAttribute? Validation { get; set; }
     
+    [Parameter] public Variant ButtonVariant { get; set; }
+    
+    [Parameter] public Color ButtonColor { get; set; }
+    
     private List<string> validationErrors = new();
     
     private async Task OpenDialog(MouseEventArgs args)
@@ -35,7 +39,9 @@
         var parameters = new DialogParameters<MudAddressDialog>
         {
             {x => x.Value, Value},
-            {x => x.SuggestionsParameters, SuggestionsParameters}
+            {x => x.SuggestionsParameters, SuggestionsParameters},
+            {x => x.ButtonVariant, ButtonVariant},
+            {x => x.ButtonColor, ButtonColor}
         };
 
         var options = new DialogOptions

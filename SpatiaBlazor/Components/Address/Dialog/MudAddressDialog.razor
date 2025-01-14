@@ -7,7 +7,7 @@
             </div>
             <MudText Typo="Typo.h6">@Title</MudText>
             <div Class="d-flex flex-grow-1 justify-end">
-                <MudButton Variant="Variant.Text" OnClick="OnSaveClicked">Save</MudButton>
+                <MudButton Variant="@ButtonVariant" Color="@ButtonColor" OnClick="OnSaveClicked">Save</MudButton>
             </div>
         </div>
         <div class="pa-4">
@@ -26,7 +26,11 @@
     [Parameter] public AddressViewModel? Value { get; set; }
     
     [Parameter] public AddressSuggestionsParametersViewModel? SuggestionsParameters { get; set; }
-    
+
+    [Parameter] public Variant ButtonVariant { get; set; } = Variant.Text;
+
+    [Parameter] public Color ButtonColor { get; set; } = Color.Default;
+     
     private IAddressFormView? _form;
     
     protected override void OnInitialized()
