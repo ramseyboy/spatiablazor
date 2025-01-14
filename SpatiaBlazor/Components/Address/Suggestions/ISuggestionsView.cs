@@ -4,5 +4,5 @@ namespace SpatiaBlazor.Components.Address.Suggestions;
 
 public interface ISuggestionsView : IViewMixin
 {
-    public AddressSuggestionsParametersViewModel SuggestionsParametersValue { get; set; }
+    public AddressSuggestionsParametersViewModel SuggestionsParameters { get; set; }
 }
