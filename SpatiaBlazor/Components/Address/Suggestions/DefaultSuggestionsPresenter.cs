@@ -27,7 +27,7 @@ internal sealed class DefaultSuggestionsPresenter(IGeocodeClient suggestionsClie
             return [];
         }
 
-        var viewModel = _view.SuggestionsParametersValue;
+        var viewModel = _view.SuggestionsParameters;
 
         var validator = new ComponentModelValidator();
         var validationResults = validator.Validate(viewModel);
@@ -38,7 +38,7 @@ internal sealed class DefaultSuggestionsPresenter(IGeocodeClient suggestionsClie
                 validationResults.ToDictionary());
         }
 
-        var suggestions = await suggestionsClient.FromAddress(_view.SuggestionsParametersValue, token);
+        var suggestions = await suggestionsClient.FromAddress(_view.SuggestionsParameters, token);
         return suggestions
             .Select(x => new DefaultGeocodeResultsViewModel(x))
             .ToList();

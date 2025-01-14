@@ -1,0 +1,84 @@
+@using System.ComponentModel.DataAnnotations
+@using SpatiaBlazor.Components.Address.Dialog
+@using SpatiaBlazor.Components.Address.Suggestions
+@inject IDialogService DialogService
+@implements IAddressFormView
+
+<MudField Variant="Variant" Label="@Label">
+    <div @onclick="OpenDialog" Class="cursor-pointer d-flex align-baseline align-content-stretch justify-space-between">
+        <MudText>@Value?.Label()</MudText>
+        <MudIconButton OnClick="OpenDialog" Icon="@Icons.Material.Filled.Map" aria-label="address" Size="Size.Small"/>
+    </div>
+</MudField>
+@foreach(var error in validationErrors)
+{
+    <MudText Class="mt-2" Color="Color.Error" Typo="Typo.caption">@error</MudText>
+}
+
+@code {
+    [Parameter] public Variant Variant { get; set; } = Variant.Text;
+    
+    [Parameter] public string? Label { get; set; }
+    
+    [Parameter] public AddressViewModel? Value { get; set; }
+    
+    [Parameter] public EventCallback<AddressViewModel> ValueChanged { get; set; }
+    
+    [Parameter] public AddressSuggestionsParametersViewModel? SuggestionsParameters { get; set; }
+    
+    [Parameter] public ValidationAttribute? Validation { get; set; }
+    
+    private List<string> validationErrors = new();
+    
+    private async Task OpenDialog(MouseEventArgs args)
+    {
+        var parameters = new DialogParameters<MudAddressDialog>
+        {
+            {x => x.Value, Value},
+            {x => x.SuggestionsParameters, SuggestionsParameters}
+        };
+
+        var options = new DialogOptions
+        {
+            FullWidth = true,
+            MaxWidth = MaxWidth.Medium
+        };
+
+        var dialog = await DialogService.ShowAsync<MudAddressDialog>(string.Empty, parameters, options);
+        var result = await dialog.Result;
+
+        if (!result.Canceled && result.Data is AddressViewModel model)
+        {
+            Value = model;
+            await ValueChanged.InvokeAsync(Value);
+        } else if (result.Canceled)
+        {
+            await ValueChanged.InvokeAsync(null);
+        }
+    }
+
+    public void TriggerRender()
+    {
+        StateHasChanged();
+    }
+
+    public bool IsFormValid()
+    {
+        return validationErrors.Count == 0;
+    }
+
+    public Task TriggerFormValidation()
+    {
+        validationErrors.Clear();
+        
+        var validationResult = Validation?.GetValidationResult(Value, new ValidationContext(this));
+        var attrValidationMessage = validationResult != ValidationResult.Success ? validationResult?.ErrorMessage : null;
+        if (attrValidationMessage is not null)
+        {
+            validationErrors.Add(attrValidationMessage);
+        }
+
+        return Task.CompletedTask;
+    }
+
+}

@@ -1,6 +1,5 @@
-@inherits MudAutocomplete<IGeocodeResultsViewModel>
+@inherits MudAutocomplete<IGeocodeResultsViewModel?>
 @implements ISuggestionsView
-@using SpatiaBlazor.Components.Extensions
 @implements IDisposable
 @inject ISuggestionsPresenter Presenter
 
@@ -10,7 +9,7 @@
 
 @code {
 
-    [Parameter] public AddressSuggestionsParametersViewModel? SuggestionsParametersValue { get; set; }
+    [Parameter] public AddressSuggestionsParametersViewModel? SuggestionsParameters { get; set; }
     
     private readonly CancellationTokenSource _cts = new ();
 
@@ -21,15 +20,18 @@
 
     protected override void OnParametersSet()
     {
-        SuggestionsParametersValue ??= new AddressSuggestionsParametersViewModel();
-        DebounceInterval = SuggestionsParametersValue.DebounceInterval;
-        MinCharacters = SuggestionsParametersValue.MinQueryLength;
+        SuggestionsParameters ??= new AddressSuggestionsParametersViewModel();
+        DebounceInterval = SuggestionsParameters.DebounceInterval;
+        MinCharacters = SuggestionsParameters.MinQueryLength;
         SearchFunc = async args => await OnSearch(args);
         ToStringFunc = model => model?.Label();
-        MaxItems = SuggestionsParametersValue.Limit;
+        MaxItems = SuggestionsParameters.Limit;
         ShowProgressIndicator = true;
-        Label = PropertyExtensions.PropertyDisplay<AddressSuggestionsParametersViewModel, string>(model => model.Query);
-        Validation = PropertyExtensions.PropertyValidation<AddressSuggestionsParametersViewModel, string>(model => model.Query);
+        ResetValueOnEmptyText = true;
+        CoerceText = true;
+        Immediate = true;
+        AdornmentIcon = Icons.Material.Filled.Search;
+        AdornmentAriaLabel = "search";
     }
 
     public void TriggerRender()
@@ -39,11 +41,11 @@
 
     private async Task<IEnumerable<IGeocodeResultsViewModel>> OnSearch(string query)
     {
-        if (SuggestionsParametersValue is null)
+        if (SuggestionsParameters is null || string.IsNullOrWhiteSpace(query))
         {
             return Array.Empty<IGeocodeResultsViewModel>();
         }
-        SuggestionsParametersValue.Query = query;
+        SuggestionsParameters.Query = query;
         return await Presenter.AutocompleteSuggestions(_cts.Token);
     }
     

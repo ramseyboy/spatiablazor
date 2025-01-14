@@ -25,6 +25,8 @@
     
     [Parameter] public AddressViewModel? Value { get; set; }
     
+    [Parameter] public AddressSuggestionsParametersViewModel? SuggestionsParameters { get; set; }
+    
     private IAddressFormView? _form;
     
     protected override void OnInitialized()

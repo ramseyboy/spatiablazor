@@ -5,7 +5,7 @@ using SpatiaBlazor.Components.Attributes;
 
 namespace SpatiaBlazor.Components.Extensions;
 
-internal static class PropertyExtensions
+public static class PropertyExtensions
 {
     internal static bool IsHidden<TSource, TProperty>(this Expression<Func<TSource, TProperty>> propertyExpression)
     {
@@ -40,8 +40,21 @@ internal static class PropertyExtensions
             return false;
         }
 
-        return !Attribute.IsDefined(member, typeof(RequiredAttribute));
+        return Attribute.IsDefined(member, typeof(RequiredAttribute));
 
+    }
+
+    internal static string? RequiredMessage<TSource, TProperty>(this Expression<Func<TSource, TProperty>> propertyExpression)
+    {
+        var pi = propertyExpression.PropertyInfo();
+        if (pi is not MemberInfo member)
+        {
+            return null;
+        }
+
+        var requiredAttr = member.GetCustomAttribute<RequiredAttribute>();
+
+        return requiredAttr?.ErrorMessage;
     }
 
     internal static string PropertyDisplay<TSource, TProperty>(this Expression<Func<TSource, TProperty>> propertyExpression)
@@ -59,7 +72,7 @@ internal static class PropertyExtensions
         return display?.Name ?? pi.Name;
     }
 
-    internal static ValidationAttribute PropertyValidation<TSource, TProperty>(this Expression<Func<TSource, TProperty>> propertyExpression)
+    public static ValidationAttribute PropertyValidation<TSource, TProperty>(this Expression<Func<TSource, TProperty>> propertyExpression)
     {
         var pi = propertyExpression.PropertyInfo();
         return new PropertyValidationAttribute<TProperty>(pi);

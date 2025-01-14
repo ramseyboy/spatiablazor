@@ -5,9 +5,11 @@ using SpatiaBlazor.Geocode.Abstractions;
 
 namespace SpatiaBlazor.Components.Address.Suggestions;
 
+/// <summary>
+/// Used to set default values for the address suggestions search parameters, i.e. Bounding box, bias location, filters, language.
+/// </summary>
 public sealed record AddressSuggestionsParametersViewModel : IAutocompleteRequest
 {
-    [Display(Name = "Search for address")]
     [Required(AllowEmptyStrings = false, ErrorMessage = "Query is empty, please input a query in order to find address suggestions")]
     public string Query { get; set; } = string.Empty;
 

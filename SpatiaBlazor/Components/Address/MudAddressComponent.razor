@@ -1,5 +1,6 @@
 @using System.Linq.Expressions
 @using MudBlazor.Utilities
+@using NetTopologySuite.Geometries
 @using SpatiaBlazor.Components.Address.Suggestions
 @using SpatiaBlazor.Components.Extensions
 @implements SpatiaBlazor.Components.Address.IAddressFormView
@@ -11,24 +12,30 @@
 
 @if (MudDialog is null)
 {
-    <div class="d-flex flex-grow-1 my-4">
-        <div Class="d-flex flex-grow-1 justify-start"></div>
+    <div class="d-flex flex-grow-1 my-4 align-content-center">
+        <div Class="d-flex flex-grow-1 justify-start">
+            <MudIconButton OnClick="OnCloseClicked" Icon="@Icons.Material.Filled.Close" aria-label="close" Size="Size.Small"/>
+        </div>
         <MudText Typo="Typo.h6">@Title</MudText>
-        <div Class="flex-grow-1 justify-start"></div>
-    </div>   
+        <div Class="d-flex flex-grow-1 justify-end">
+        </div>
+    </div>
 }
 
 <MudAddressSuggestionsComponent
     @ref="_suggestions"
-    AdornmentIcon="@Icons.Material.Filled.Search"
-    AdornmentAriaLabel="search"
     ShrinkLabel="@ShrinkLabel"
     Variant="SuggestionsVariant"
     Clearable="Clearable"
-    OnClearButtonClick="OnClearClicked"
     Value="_geocodeSelection"
     ValueChanged="OnSelectionChanged"
-    SuggestionsParametersValue="Value?.SuggestionsParameters"/>
+    Label="@(PropertyExtensions.PropertyDisplay((AddressViewModel model) => model.Geom))"
+    SuggestionsParameters="SuggestionsParameters"/>
+
+@if (_suggestionRequiredError is not null)
+{
+<MudText Class="my-2" Color="Color.Error" Typo="Typo.caption">@_suggestionRequiredError</MudText>
+}
 
 <MudDivider Class="my-4"/>
 
@@ -77,8 +84,14 @@
 
     [Parameter] public EventCallback<AddressViewModel> ValueChanged { get; set; }
     
+    [Parameter] public AddressSuggestionsParametersViewModel? SuggestionsParameters { get; set; }
+    
     [CascadingParameter]
     private MudDialogInstance? MudDialog { get; set; }
+
+    private string? _suggestionRequiredError = null;
+    
+    private AddressViewModel _viewModel = new();
 
     private IGeocodeResultsViewModel? _geocodeSelection;
 
@@ -95,8 +108,8 @@
                           Immediate="@ImmediateValidation"
                           ShrinkLabel="@ShrinkLabel"
                           AutoGrow="autoGrow"
-                          Value="@(propertyExpression.Compile().Invoke(Value!))"
-                          ValueChanged="@(val => setFunc(Value!, val))"
+                          Value="@(propertyExpression.Compile().Invoke(_viewModel))"
+                          ValueChanged="@(val => setFunc(_viewModel, val))"
                           Label="@(propertyExpression.PropertyDisplay())"
                           Validation="propertyExpression.PropertyValidation()"/>   
         }
@@ -104,23 +117,31 @@
 
     protected override void OnParametersSet()
     {
-        Value ??= new AddressViewModel();
+        _viewModel = Value ?? new AddressViewModel();
         if (_geocodeSelection is null && _suggestions != null)
         {
-            _suggestions.Text = Value.Label();
+            _suggestions.Text = _viewModel.Label();
         }
     }
 
     private async Task OnFormChanged(FormFieldChangedEventArgs args)
     {
-        await ValueChanged.InvokeAsync(Value);
+        await ValueChanged.InvokeAsync(_viewModel);
     }
 
-    private async Task OnSelectionChanged(IGeocodeResultsViewModel selected)
+    private async Task OnSelectionChanged(IGeocodeResultsViewModel? selected)
     {
-        Value?.UpdateFromGeocode(selected);
         _geocodeSelection = selected;
-        await ValueChanged.InvokeAsync(Value);
+        if (_geocodeSelection is not null)
+        {
+            _viewModel.UpdateFromGeocode(_geocodeSelection);
+            await ValueChanged.InvokeAsync(_viewModel);
+        }
+        else
+        {
+            _viewModel.Clear();
+            await ValueChanged.InvokeAsync(null);
+        }
     }
 
     public void TriggerRender()
@@ -130,7 +151,8 @@
 
     public bool IsFormValid()
     {
-        return _form?.IsValid ?? false;
+        var geomValid = !PropertyExtensions.IsRequired((AddressViewModel model) => model.Geom) || _viewModel.Geom is not null;
+        return geomValid && (_form?.IsValid ?? false);
     }
 
     public async Task TriggerFormValidation()
@@ -140,14 +162,24 @@
             return;
         }
 
+        if (PropertyExtensions.IsRequired((AddressViewModel model) => model.Geom) && _viewModel.Geom is null)
+        {
+            var requiredMsg = PropertyExtensions.RequiredMessage((AddressViewModel model) => model.Geom);
+            _suggestionRequiredError = requiredMsg;
+        }
+        else
+        {
+            _suggestionRequiredError = null;
+        }
+        
         await _form.Validate();
     }
     
-    private async Task OnClearClicked(MouseEventArgs? args = null)
+    private async Task OnCloseClicked(MouseEventArgs? args = null)
     {
         _suggestions?.Clear();
-        Value?.Clear();
-        await ValueChanged.InvokeAsync(Value);
+        _viewModel.Clear();
+        await ValueChanged.InvokeAsync(null);
     }
 
     private bool IsDisabled<T>(Expression<Func<AddressViewModel, T>> propertyExpression)

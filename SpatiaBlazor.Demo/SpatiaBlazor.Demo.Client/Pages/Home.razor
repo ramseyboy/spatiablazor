@@ -1,8 +1,10 @@
 ﻿@page "/"
+@using System.ComponentModel.DataAnnotations
 @using NetTopologySuite.Geometries
 @using SpatiaBlazor.Components.Address
 @using SpatiaBlazor.Components.Address.Dialog
 @using SpatiaBlazor.Components.Address.Suggestions
+@using SpatiaBlazor.Components.Extensions
 
 <MudText Class="my-4">Selected: @_model?.ToString()</MudText>
 
@@ -10,22 +12,32 @@
 
 <MudTabs Elevation="2" Rounded="true" ApplyEffectsToContainer="true" PanelClass="pa-6">
     <MudTabPanel Text="Inline">
-        <MudAddressComponent @bind-Value="_model"></MudAddressComponent>
+        <MudButton Variant="Variant.Filled" OnClick="async () => await _viewRef?.TriggerFormValidation()!">Validate (isValid = @_viewRef?.IsFormValid())</MudButton>
+        <MudAddressComponent @ref="_viewRef" @bind-Value="_model.AddressViewModel" SuggestionsParameters="_suggestionsParameters"></MudAddressComponent>
     </MudTabPanel>
     <MudTabPanel Text="Dialog">
-        <MudAddressDialogField Variant="Variant.Outlined" @bind-Value="_model"></MudAddressDialogField>
+        <MudButton Variant="Variant.Filled" OnClick="async () => await _viewRef?.TriggerFormValidation()!">Validate (isValid = @_viewRef?.IsFormValid())</MudButton>
+        <MudAddressField @ref="_viewRef" Validation="PropertyExtensions.PropertyValidation((ParentViewModel vm) => vm.AddressViewModel)" Label="Search for an address" Variant="Variant.Outlined" @bind-Value="_model.AddressViewModel" SuggestionsParameters="_suggestionsParameters"></MudAddressField>
     </MudTabPanel>
 </MudTabs>
 
 @code
 {
-    private AddressViewModel? _model = new AddressViewModel
+    private ParentViewModel _model = new();
+
+    private IAddressFormView? _viewRef;
+
+    private readonly AddressSuggestionsParametersViewModel _suggestionsParameters = new()
     {
-        SuggestionsParameters = new AddressSuggestionsParametersViewModel
-        {
-            BoundingBox = new Envelope(-106.6168,-93.5074,25.8419,36.5008),
-            BiasLocation = new Point(-97.733330, 30.266666),
-            TypeFilters = new HashSet<string>{"house"}
-        }
+        BoundingBox = new Envelope(-106.6168, -93.5074, 25.8419, 36.5008),
+        BiasLocation = new Point(-97.733330, 30.266666),
     };
+
+    public record ParentViewModel
+    {
+        public string? Title { get; set; } = "Title";
+
+        [Required(ErrorMessage = "Please choose search for an address")]
+        public AddressViewModel? AddressViewModel { get; set; }
+    }
 }
