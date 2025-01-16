@@ -1,4 +1,4 @@
-@inherits MudAutocomplete<IGeocodeResultsViewModel?>
+@inherits MudAutocomplete<IGeocodeResultsViewModel>
 @implements ISuggestionsView
 @implements IDisposable
 @inject ISuggestionsPresenter Presenter
@@ -23,7 +23,7 @@
         SuggestionsParameters ??= new AddressSuggestionsParametersViewModel();
         DebounceInterval = SuggestionsParameters.DebounceInterval;
         MinCharacters = SuggestionsParameters.MinQueryLength;
-        SearchFunc = async args => await OnSearch(args);
+        SearchFunc = OnSearch;
         ToStringFunc = model => model?.Label();
         MaxItems = SuggestionsParameters.Limit;
         ShowProgressIndicator = true;
@@ -40,14 +40,14 @@
         StateHasChanged();
     }
 
-    private async Task<IEnumerable<IGeocodeResultsViewModel>> OnSearch(string query)
+    private async Task<IEnumerable<IGeocodeResultsViewModel>> OnSearch(string query, CancellationToken token)
     {
         if (SuggestionsParameters is null || string.IsNullOrWhiteSpace(query))
         {
             return Array.Empty<IGeocodeResultsViewModel>();
         }
         SuggestionsParameters.Query = query;
-        return await Presenter.AutocompleteSuggestions(_cts.Token);
+        return await Presenter.AutocompleteSuggestions(token);
     }
     
     public void Dispose()
