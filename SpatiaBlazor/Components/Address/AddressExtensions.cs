@@ -1,4 +1,5 @@
 using System.Formats.Tar;
+using System.Text;
 using NetTopologySuite.Geometries;
 using SpatiaBlazor.Components.Address.Suggestions;
 using SpatiaBlazor.Components.Attributes.Label;
@@ -19,20 +20,39 @@ public static class AddressExtensions
         return labelFactory.Create(viewModel);
     }
 
-    internal static void UpdateFromGeocode(this AddressViewModel viewModel, IGeocodeResultsViewModel geocode, ILabelFactory? labelFactory = null)
+    internal static void UpdateFromGeocode(this AddressViewModel viewModel, IGeocodeResultsViewModel geocode)
     {
-        if (geocode.Name is not null)
+        var builder = new StringBuilder();
+
+        if (!string.IsNullOrWhiteSpace(geocode.Name))
         {
-            viewModel.Address1 = $"{geocode.Name}, {geocode.Street}";
+            builder.Append(geocode.Name);
+            if (!string.IsNullOrWhiteSpace(geocode.HouseNumber) || !string.IsNullOrWhiteSpace(geocode.Street))
+            {
+                builder.Append(',');
+                builder.Append(' ');
+            }
         }
-        else
+
+        if (!string.IsNullOrWhiteSpace(geocode.HouseNumber))
         {
-            viewModel.Address1 = $"{geocode.HouseNumber} {geocode.Street}";
+            builder.Append(geocode.HouseNumber);
+            if (!string.IsNullOrWhiteSpace(geocode.Street))
+            {
+                builder.Append(' ');
+            }
         }
-        viewModel.City = geocode.City;
-        viewModel.StateOrProvince = geocode.StateOrProvince;
-        viewModel.Country = geocode.CountryCode;
-        viewModel.ZipOrPostCode = geocode.ZipOrPostCode;
+
+        if (!string.IsNullOrWhiteSpace(geocode.Street))
+        {
+            builder.Append(geocode.Street);
+        }
+
+        viewModel.Address1 = builder.ToString();
+        viewModel.City = geocode.City ?? string.Empty;
+        viewModel.StateOrProvince = geocode.StateOrProvince ?? string.Empty;
+        viewModel.Country = geocode.CountryCode ?? string.Empty;
+        viewModel.ZipOrPostCode = geocode.ZipOrPostCode ?? string.Empty;
         viewModel.Geom = geocode.Geom;
     }
 

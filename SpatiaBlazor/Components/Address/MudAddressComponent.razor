@@ -21,17 +21,17 @@
         </div>
     </div>
 }
-
-<MudAddressSuggestionsComponent
-    @ref="_suggestions"
-    ShrinkLabel="@ShrinkLabel"
-    Variant="SuggestionsVariant"
-    Clearable="Clearable"
-    Value="_geocodeSelection"
-    ValueChanged="OnSelectionChanged"
-    Label="@(PropertyExtensions.PropertyDisplay((AddressViewModel model) => model.Geom))"
-    SuggestionsParameters="SuggestionsParameters"/>
-
+<MudFocusTrap Disabled="MudDialog is null" DefaultFocus="DefaultFocus.FirstChild">
+    <MudAddressSuggestionsComponent
+        @ref="_suggestions"
+        ShrinkLabel="@ShrinkLabel"
+        Variant="SuggestionsVariant"
+        Clearable="Clearable"
+        Value="_geocodeSelection"
+        ValueChanged="OnSelectionChanged"
+        Label="@(PropertyExtensions.PropertyDisplay((AddressViewModel model) => model.Geom))"
+        SuggestionsParameters="SuggestionsParameters"/>
+</MudFocusTrap>
 @if (_suggestionRequiredError is not null)
 {
 <MudText Class="my-2" Color="Color.Error" Typo="Typo.caption">@_suggestionRequiredError</MudText>
