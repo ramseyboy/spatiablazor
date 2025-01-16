@@ -19,7 +19,10 @@ public class MudAddressSuggestionsComponentTest(ITestOutputHelper testOutputHelp
             Services.Add(serviceDescriptor);
         }
 
-        Services.AddMudServices();
+        Services.AddMudServices(options =>
+        {
+            options.PopoverOptions.CheckForPopoverProvider = false;
+        });
         Services.AddAddressSuggestions();
         return Task.CompletedTask;
     }

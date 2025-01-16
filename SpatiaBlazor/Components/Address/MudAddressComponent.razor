@@ -129,7 +129,7 @@
         await ValueChanged.InvokeAsync(_viewModel);
     }
 
-    private async Task OnSelectionChanged(IGeocodeResultsViewModel? selected)
+    private async Task OnSelectionChanged(IGeocodeResultsViewModel selected)
     {
         _geocodeSelection = selected;
         if (_geocodeSelection is not null)
@@ -177,7 +177,10 @@
     
     private async Task OnCloseClicked(MouseEventArgs? args = null)
     {
-        _suggestions?.Clear();
+        if (_suggestions is not null)
+        {
+            await _suggestions.ClearAsync();   
+        }
         _viewModel.Clear();
         await ValueChanged.InvokeAsync(null);
     }

@@ -54,8 +54,7 @@
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="Microsoft.AspNetCore.Components" Version="[8.0.3,)" />
-        <PackageReference Include="MudBlazor" Version="[6.20,)" />
+        <PackageReference Include="MudBlazor" Version="7.15.0" />
         <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="[8,)" />
         <PackageReference Include="Microsoft.Extensions.Http" Version="[8,)" />
         <PackageReference Include="Microsoft.Extensions.Http.Polly" Version="[8,)" />
