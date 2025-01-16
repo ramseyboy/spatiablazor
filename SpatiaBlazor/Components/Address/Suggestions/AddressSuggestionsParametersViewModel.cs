@@ -25,4 +25,6 @@ public sealed record AddressSuggestionsParametersViewModel : IAutocompleteReques
     public int DebounceInterval { get; set; } = 300;
 
     public int MinQueryLength { get; set; } = 6;
+
+    public string? HelpText { get; set; }
 }
