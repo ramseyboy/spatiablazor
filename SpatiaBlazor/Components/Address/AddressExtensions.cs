@@ -2,25 +2,20 @@ using System.Formats.Tar;
 using System.Text;
 using NetTopologySuite.Geometries;
 using SpatiaBlazor.Components.Address.Suggestions;
-using SpatiaBlazor.Components.Attributes.Label;
+using SpatiaBlazor.Geocode.Abstractions;
+using SpatiaBlazor.Geocode.Abstractions.Descriptor;
 
 namespace SpatiaBlazor.Components.Address;
 
 public static class AddressExtensions
 {
-    public static string Label(this AddressViewModel viewModel, ILabelFactory? labelFactory = null)
+    public static string Label(this AddressViewModel viewModel, IDescriptorFactory? descriptionFactory = null)
     {
-        labelFactory ??= new DefaultLabelFactory();
-        return labelFactory.Create(viewModel);
+        descriptionFactory ??= new AttributeOrderDescriptorFactory();
+        return descriptionFactory.Create(viewModel);
     }
 
-    public static string Label(this IGeocodeResultsViewModel viewModel, ILabelFactory? labelFactory = null)
-    {
-        labelFactory ??= new DefaultLabelFactory();
-        return labelFactory.Create(viewModel);
-    }
-
-    internal static void UpdateFromGeocode(this AddressViewModel viewModel, IGeocodeResultsViewModel geocode)
+    internal static void UpdateFromGeocode(this AddressViewModel viewModel, IGeocodeRecord geocode)
     {
         var builder = new StringBuilder();
 

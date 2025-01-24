@@ -28,4 +28,8 @@
       <ProjectReference Include="..\SpatiaBlazor\SpatiaBlazor.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="Geocode\Abstractions\" />
+    </ItemGroup>
+
 </Project>

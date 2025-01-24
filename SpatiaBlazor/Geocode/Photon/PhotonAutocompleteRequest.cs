@@ -9,6 +9,10 @@ namespace SpatiaBlazor.Geocode.Photon;
 
 public record PhotonAutocompleteRequest : IAutocompleteRequest, IGeocodeRequest
 {
+    public PhotonAutocompleteRequest()
+    {
+    }
+
     public PhotonAutocompleteRequest(IAutocompleteRequest request)
     {
         Query = request.Query;

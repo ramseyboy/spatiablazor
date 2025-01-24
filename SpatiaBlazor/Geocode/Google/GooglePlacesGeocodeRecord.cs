@@ -6,7 +6,8 @@ namespace SpatiaBlazor.Geocode.Google;
 public class GooglePlacesGeocodeRecord: IGeocodeRecord
 {
     public string Id { get; set; }
-    public Geometry Geom { get; set; }
+    public string Descriptor { get; set; }
+    public Point Geom { get; set; }
     public Envelope BoundingBox { get; set; }
     public string? Name { get; set; }
     public string? Street { get; set; }

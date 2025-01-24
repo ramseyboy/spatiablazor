@@ -1,6 +1,6 @@
-namespace SpatiaBlazor.Components.Attributes.Label;
+namespace SpatiaBlazor.Geocode.Abstractions.Descriptor;
 
-public interface ILabelFactory
+public interface IDescriptorFactory
 {
     /// <summary>
     ///

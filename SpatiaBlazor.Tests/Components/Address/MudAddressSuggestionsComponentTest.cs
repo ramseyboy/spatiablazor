@@ -36,7 +36,7 @@ public class MudAddressSuggestionsComponentTest(ITestOutputHelper testOutputHelp
     [Fact(DisplayName = "Given a valid service collection with dependencies, when schedule component rendered, the view should be in a valid state")]
     public void TestRenderingOfComponent()
     {
-        var mockPresenter = A.Fake<ISuggestionsPresenter>();
+        var mockPresenter = A.Fake<IAddressSuggestionsPresenter>();
         Services.SwapTransient(mockPresenter);
 
         var cut = RenderComponent<MudAddressSuggestionsComponent>();

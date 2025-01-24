@@ -8,7 +8,7 @@ public static class AddressSuggestionsExtensions
         this IServiceCollection services,
         ServiceLifetime serviceLifetime = ServiceLifetime.Transient)
     {
-        services.Add(new ServiceDescriptor(typeof(ISuggestionsPresenter), typeof(DefaultSuggestionsPresenter), serviceLifetime));
+        services.Add(new ServiceDescriptor(typeof(IAddressSuggestionsPresenter), typeof(DefaultAddressSuggestionsPresenter), serviceLifetime));
         return services;
     }
 }

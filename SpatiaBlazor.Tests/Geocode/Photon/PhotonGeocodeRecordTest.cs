@@ -1,12 +1,10 @@
 using NetTopologySuite.Geometries;
-using SpatiaBlazor.Components.Address;
-using SpatiaBlazor.Components.Address.Suggestions;
-using SpatiaBlazor.Components.Attributes.Label;
+using SpatiaBlazor.Geocode.Abstractions.Descriptor;
 using SpatiaBlazor.Geocode.Photon;
 
-namespace SpatiaBlazor.Tests.Components.Address.Photon;
+namespace SpatiaBlazor.Tests.Geocode.Photon;
 
-public class DefaultGeocodeResultsViewModelTest
+public class PhotonGeocodeRecordTest
 {
     [Fact(DisplayName = "Given a valid non empty structured address, When view model is created, Then label should match the address data")]
     public void TestLabelWithAllNull()
@@ -23,10 +21,12 @@ public class DefaultGeocodeResultsViewModelTest
             CountryCode = "US",
             Geom = new Point(0,0)
         };
-        var viewModel = new DefaultGeocodeResultsViewModel(response);
 
-        Assert.NotNull(viewModel.Label());
-        Assert.NotEmpty(viewModel.Label());
-        Assert.Equal($"{viewModel.Name}, {viewModel.HouseNumber} {viewModel.Street}, {viewModel.City}, {viewModel.StateOrProvince}, {viewModel.ZipOrPostCode}, {viewModel.CountryCode}", viewModel.Label());
+        var descriptorFactory = new AttributeOrderDescriptorFactory();
+        response.Descriptor = descriptorFactory.Create(response);
+
+        Assert.NotNull(response.Descriptor);
+        Assert.NotEmpty(response.Descriptor);
+        Assert.Equal($"{response.Name}, {response.HouseNumber} {response.Street}, {response.City}, {response.StateOrProvince}, {response.ZipOrPostCode}, {response.CountryCode}", response.Descriptor);
     }
 }

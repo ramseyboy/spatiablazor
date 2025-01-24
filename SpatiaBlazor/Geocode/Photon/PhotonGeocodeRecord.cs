@@ -2,13 +2,14 @@ using System.Collections.Immutable;
 using NetTopologySuite.Features;
 using NetTopologySuite.Geometries;
 using SpatiaBlazor.Geocode.Abstractions;
+using SpatiaBlazor.Geocode.Abstractions.Descriptor;
 
 namespace SpatiaBlazor.Geocode.Photon;
 
 public record PhotonGeocodeRecord: IGeocodeRecord
 {
-    //unused for now
     private const string OsmIdAttribute = "osm_id";
+    //unused for now
     private const string OsmKeyAttribute = "osm_key";
     private const string OsmValueAttribute = "osm_value";
     private const string OsmTypeAttribute = "osm_type";
@@ -29,10 +30,13 @@ public record PhotonGeocodeRecord: IGeocodeRecord
 
     public PhotonGeocodeRecord()
     {
-
+        Id = string.Empty;
+        Descriptor = string.Empty;
+        Geom = Point.Empty;
+        BoundingBox = new Envelope();
     }
 
-    public PhotonGeocodeRecord(IFeature feature)
+    public PhotonGeocodeRecord(IFeature feature, IDescriptorFactory? descriptorFactory = null)
     {
         if (feature.Geometry is null || feature.Geometry.IsEmpty || feature.Attributes is null)
         {
@@ -86,7 +90,14 @@ public record PhotonGeocodeRecord: IGeocodeRecord
         }
 
         Id = id;
-        Geom = feature.Geometry;
+        if (feature.Geometry is Point point)
+        {
+            Geom = point;
+        } else
+        {
+            // create point from centroid of geom, better than just grabbing the first/random vertex I reckon
+            Geom = feature.Geometry.Centroid;
+        }
         BoundingBox = boundingBox;
         Name = attr.GetOptionalValue(NameAttribute)?.ToString();
         Street = attr.GetOptionalValue(StreetAttribute)?.ToString();
@@ -99,22 +110,33 @@ public record PhotonGeocodeRecord: IGeocodeRecord
         Locality = attr.GetOptionalValue(LocalityAttribute)?.ToString();
         CountyOrRegion = attr.GetOptionalValue(CountyAttribute)?.ToString();
         Types = typeSet;
+
+        descriptorFactory ??= new AttributeOrderDescriptorFactory();
+        Descriptor = descriptorFactory.Create(this);
     }
 
     public string Id { get; set; }
-    public Geometry Geom { get; set; }
+    public string Descriptor { get; set; }
+    public Point Geom { get; set; }
     public Envelope BoundingBox { get; set; }
+    [DescriptorOrder(Order = 1, Delimiter = ",")]
     public string? Name { get; set; }
-    public string? Street { get; set; }
+    [DescriptorOrder(Order = 2, Delimiter = " ")]
     public string? HouseNumber { get; set; }
+    [DescriptorOrder(Order = 3, Delimiter = ",")]
+    public string? Street { get; set; }
+    [DescriptorOrder(Order = 4, Delimiter = ",")]
     public string? City { get; set; }
+    [DescriptorOrder(Order = 5, Delimiter = ",")]
+    public string? StateOrProvince { get; set; }
+    [DescriptorOrder(Order = 6, Delimiter = ",")]
+    public string? ZipOrPostCode { get; set; }
+    [DescriptorOrder(Order = 7)]
+    public string? CountryCode { get; set; }
     public string? Locality { get; set; }
     public string? CountyOrRegion { get; set; }
-    public string? StateOrProvince { get; set; }
     public string? Country { get; set; }
-    public string? CountryCode { get; set; }
-    public string? ZipOrPostCode { get; set; }
-    public ISet<string> Types { get; private set; } = ImmutableHashSet<string>.Empty;
+    public ISet<string> Types { get; } = ImmutableHashSet<string>.Empty;
 
     public bool IsValid { get; set; } = true;
 }

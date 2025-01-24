@@ -2,11 +2,11 @@ namespace SpatiaBlazor.Geocode.Abstractions;
 
 public interface IGeocodeClient
 {
-    public Task<IEnumerable<IGeocodeRecord>> FromAddress(
+    public Task<IEnumerable<IAutocompleteRecord>> Autocomplete(
         IAutocompleteRequest request,
         CancellationToken token = default);
 
-    public Task<IEnumerable<IGeocodeRecord>> FromPoint(
-        IReverseGeocodeRequest request,
+    public Task<IEnumerable<IGeocodeRecord>> Geocode(
+        IAutocompleteRecord result,
         CancellationToken token = default);
 }

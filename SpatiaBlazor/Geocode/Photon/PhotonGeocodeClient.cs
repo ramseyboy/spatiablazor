@@ -17,7 +17,7 @@ public sealed class PhotonGeocodeClient(
 
     private string BaseUrl => options.Value.ApiUrl;
 
-    public async Task<IEnumerable<IGeocodeRecord>> FromAddress(IAutocompleteRequest request, CancellationToken token = default)
+    public async Task<IEnumerable<IAutocompleteRecord>> Autocomplete(IAutocompleteRequest request, CancellationToken token = default)
     {
         var httpClient = httpClientFactory.CreateClient(HttpClientTag);
         httpClient.BaseAddress = new Uri(BaseUrl);
@@ -54,18 +54,17 @@ public sealed class PhotonGeocodeClient(
                     }
                     catch (ArgumentException e)
                     {
-                        if (request.IgnoreErrors)
-                        {
-                            logger.LogError(e, "Encountered error when parsing feature for query {q}", request.Query);
-                            return new PhotonGeocodeRecord
-                            {
-                                IsValid = false
-                            };
-                        }
-                        else
+                        if (!request.IgnoreErrors)
                         {
                             throw;
                         }
+
+                        logger.LogError(e, "Encountered error when parsing feature for query {q}", request.Query);
+                        return new PhotonGeocodeRecord
+                        {
+                            IsValid = false
+                        };
+
                     }
                 })
                 .Where(x => x.IsValid)
@@ -78,9 +77,19 @@ public sealed class PhotonGeocodeClient(
         return [];
     }
 
-    public async Task<IEnumerable<IGeocodeRecord>> FromPoint(IReverseGeocodeRequest request, CancellationToken token = default)
+    public async Task<IEnumerable<IGeocodeRecord>> Geocode(IAutocompleteRecord result, CancellationToken token = default)
     {
-        //todo implement reverse
-        return [];
+        if (result is PhotonGeocodeRecord record)
+        {
+            return [record];
+        }
+
+        var autoCompleteRequest = new PhotonAutocompleteRequest
+        {
+            Query = result.Descriptor
+        };
+
+        var results = await Autocomplete(autoCompleteRequest, token);
+        return results.Cast<PhotonGeocodeRecord>();
     }
 }
