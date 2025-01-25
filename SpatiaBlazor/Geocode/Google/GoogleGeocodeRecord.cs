@@ -1,14 +1,15 @@
+using System.Collections.Immutable;
 using NetTopologySuite.Geometries;
 using SpatiaBlazor.Geocode.Abstractions;
 
 namespace SpatiaBlazor.Geocode.Google;
 
-public class GooglePlacesGeocodeRecord: IGeocodeRecord
+public sealed record GoogleGeocodeRecord : IGeocodeRecord
 {
-    public string Id { get; set; }
-    public string Descriptor { get; set; }
-    public Point Geom { get; set; }
-    public Envelope BoundingBox { get; set; }
+    public required string Id { get; set; }
+    public required string Descriptor { get; set; }
+    public required Point Geom { get; set; }
+    public required Envelope BoundingBox { get; set; }
     public string? Name { get; set; }
     public string? Street { get; set; }
     public string? HouseNumber { get; set; }
@@ -19,5 +20,5 @@ public class GooglePlacesGeocodeRecord: IGeocodeRecord
     public string? Country { get; set; }
     public string? CountryCode { get; set; }
     public string? ZipOrPostCode { get; set; }
-    public ISet<string> Types { get; }
+    public ISet<string> Types { get; init; } = ImmutableHashSet<string>.Empty;
 }

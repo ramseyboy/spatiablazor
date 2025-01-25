@@ -44,7 +44,14 @@ internal sealed class DefaultAddressSuggestionsPresenter(IGeocodeClient suggesti
 
     public async Task<IGeocodeRecord> SuggestionClicked(IAutocompleteRecord record, CancellationToken token)
     {
-        var geocodeRecords = await suggestionsClient.Geocode(record, token);
+        if (_view is null)
+        {
+            //todo
+            throw new ApplicationException();
+        }
+
+        var viewModel = _view.SuggestionsParameters;
+        var geocodeRecords = await suggestionsClient.Geocode(record, viewModel, token);
         //todo: show dialog to accept record if multiple or show error if none
         return geocodeRecords.First();
     }

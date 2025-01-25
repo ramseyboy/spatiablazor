@@ -19,7 +19,8 @@ public class PhotonGeocodeRecordTest
             ZipOrPostCode = "78758",
             StateOrProvince = "Texas",
             CountryCode = "US",
-            Geom = new Point(0,0)
+            Geom = new Point(0,0),
+            BoundingBox = new Envelope()
         };
 
         var descriptorFactory = new AttributeOrderDescriptorFactory();

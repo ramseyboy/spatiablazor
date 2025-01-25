@@ -10,16 +10,15 @@ namespace SpatiaBlazor.Geocode.Photon;
 public sealed class PhotonGeocodeClient(
     IHttpClientFactory httpClientFactory,
     ILogger<PhotonGeocodeClient> logger,
-    IOptions<PhotonGeocodeConfigurationOptions> options)
+    IOptions<PhotonGeocodeConfigurationOptions> options,
+    IGeocodeRecordFactory<IFeature, PhotonGeocodeRecord> recordFactory)
     : IGeocodeClient
 {
-    public const string HttpClientTag = "PhotonGeocodeClient";
-
     private string BaseUrl => options.Value.ApiUrl;
 
     public async Task<IEnumerable<IAutocompleteRecord>> Autocomplete(IAutocompleteRequest request, CancellationToken token = default)
     {
-        var httpClient = httpClientFactory.CreateClient(HttpClientTag);
+        var httpClient = httpClientFactory.CreateClient(GeocodeExtensions.HttpClientTag);
         httpClient.BaseAddress = new Uri(BaseUrl);
 
         var photonRequest = new PhotonAutocompleteRequest(request);
@@ -50,7 +49,7 @@ public sealed class PhotonGeocodeClient(
                 {
                     try
                     {
-                        return new PhotonGeocodeRecord(feature);
+                        return recordFactory.Create(feature);
                     }
                     catch (ArgumentException e)
                     {
@@ -60,10 +59,7 @@ public sealed class PhotonGeocodeClient(
                         }
 
                         logger.LogError(e, "Encountered error when parsing feature for query {q}", request.Query);
-                        return new PhotonGeocodeRecord
-                        {
-                            IsValid = false
-                        };
+                        return recordFactory.Empty;
 
                     }
                 })
@@ -77,19 +73,35 @@ public sealed class PhotonGeocodeClient(
         return [];
     }
 
-    public async Task<IEnumerable<IGeocodeRecord>> Geocode(IAutocompleteRecord result, CancellationToken token = default)
+    public async Task<IEnumerable<IGeocodeRecord>> Geocode(IGeocodeRequest request, CancellationToken token = default)
+    {
+        var autoCompleteRequest = new PhotonAutocompleteRequest(request.Query)
+        {
+            BoundingBox = request.BoundingBox,
+            Language = request.Language,
+            Region = request.Region,
+            TypeFilters = request.TypeFilters
+        };
+
+        var results = await Autocomplete(autoCompleteRequest, token);
+        return results.Cast<PhotonGeocodeRecord>();
+    }
+
+    public async Task<IEnumerable<IGeocodeRecord>> Geocode(IAutocompleteRecord result, IGeocodeRequest request, CancellationToken token = default)
     {
         if (result is PhotonGeocodeRecord record)
         {
             return [record];
         }
 
-        var autoCompleteRequest = new PhotonAutocompleteRequest
+        var autoCompleteRequest = new PhotonAutocompleteRequest(result.Descriptor)
         {
-            Query = result.Descriptor
+            BoundingBox = request.BoundingBox,
+            Language = request.Language,
+            Region = request.Region,
+            TypeFilters = request.TypeFilters
         };
 
-        var results = await Autocomplete(autoCompleteRequest, token);
-        return results.Cast<PhotonGeocodeRecord>();
+        return await Geocode(autoCompleteRequest, token);
     }
 }

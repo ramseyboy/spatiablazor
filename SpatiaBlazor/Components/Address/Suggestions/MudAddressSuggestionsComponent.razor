@@ -9,7 +9,7 @@
 }
 
 <MudAutocomplete
-    T="IAutocompleteRecord"
+    T="IAutocompleteRecord?"
     Variant="Variant"
     ShrinkLabel="ShrinkLabel"
     Label="@Label"
@@ -29,11 +29,11 @@
     DebounceInterval="@SuggestionsParameters.DebounceInterval"
     MinCharacters="@SuggestionsParameters.MinQueryLength"
     SearchFunc="@OnSearch"
-    ToStringFunc="@(model => model.Descriptor)"
+    ToStringFunc="@(model => model?.Descriptor ?? string.Empty)"
     MaxItems="SuggestionsParameters.Limit"
     ShowProgressIndicator="true"
     ResetValueOnEmptyText="true"
-    CoerceText="true"
+    CoerceText="false"
     Clearable="Clearable"
     ValueChanged="OnAutocompleteSelected"
     Value="selectedAutocompleteValue"

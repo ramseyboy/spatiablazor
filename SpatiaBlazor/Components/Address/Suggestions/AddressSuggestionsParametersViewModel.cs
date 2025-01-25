@@ -18,8 +18,9 @@ public sealed record AddressSuggestionsParametersViewModel : IAutocompleteReques
     public string? Language { get; set; }
     public ISet<string> TypeFilters { get; set; } = ImmutableHashSet<string>.Empty;
     public int? Limit { get; set; }
-    public double? Zoom { get; set; }
-    public int? Scale { get; set; }
+    public double? Radius { get; set; }
+    public double? Scale { get; set; }
+    public string? Region { get; set; }
     public bool IgnoreErrors { get; set; }
 
     public int DebounceInterval { get; set; } = 300;

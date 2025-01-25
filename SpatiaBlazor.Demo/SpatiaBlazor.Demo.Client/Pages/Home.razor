@@ -10,16 +10,8 @@
 
 <MudDivider />
 
-<MudTabs Elevation="2" Rounded="true" ApplyEffectsToContainer="true" PanelClass="pa-6">
-    <MudTabPanel Text="Inline">
-        <MudButton Variant="Variant.Filled" OnClick="async () => await _viewRef?.TriggerFormValidation()!">Validate (isValid = @_viewRef?.IsFormValid())</MudButton>
-        <MudAddressComponent @ref="_viewRef" @bind-Value="_model.AddressViewModel" SuggestionsParameters="_suggestionsParameters"></MudAddressComponent>
-    </MudTabPanel>
-    <MudTabPanel Text="Dialog">
-        <MudButton Variant="Variant.Filled" OnClick="async () => await _viewRef?.TriggerFormValidation()!">Validate (isValid = @_viewRef?.IsFormValid())</MudButton>
-        <MudAddressField @ref="_viewRef" Validation="PropertyExtensions.PropertyValidation((ParentViewModel vm) => vm.AddressViewModel)" Label="Search for an address" Variant="Variant.Outlined" @bind-Value="_model.AddressViewModel" SuggestionsParameters="_suggestionsParameters"></MudAddressField>
-    </MudTabPanel>
-</MudTabs>
+<MudButton Variant="Variant.Filled" OnClick="async () => await _viewRef?.TriggerFormValidation()!">Validate (isValid = @_viewRef?.IsFormValid())</MudButton>
+<MudAddressField @ref="_viewRef" Validation="PropertyExtensions.PropertyValidation((ParentViewModel vm) => vm.AddressViewModel)" Label="Search for an address" Variant="Variant.Outlined" @bind-Value="_model.AddressViewModel" SuggestionsParameters="_suggestionsParameters"></MudAddressField>
 
 @code
 {

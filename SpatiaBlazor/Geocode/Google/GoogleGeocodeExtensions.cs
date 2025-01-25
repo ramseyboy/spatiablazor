@@ -1,4 +1,8 @@
 using Microsoft.Extensions.DependencyInjection;
+using NetTopologySuite.Geometries;
+using ProjNet.CoordinateSystems;
+using SpatiaBlazor.Geocode.Abstractions;
+using SpatiaBlazor.Geocode.Google.V1;
 
 namespace SpatiaBlazor.Geocode.Google;
 
@@ -9,21 +13,20 @@ public static class GoogleGeocodeExtensions
         ServiceLifetime serviceLifetime = ServiceLifetime.Transient,
         string? configSectionPath = null)
     {
-        var pathPrefix = string.Empty;
-        if (configSectionPath is not null)
-        {
-            pathPrefix = !configSectionPath.EndsWith(':') ? $"{configSectionPath}:" : configSectionPath;
-        }
+        var path = $"{configSectionPath.OptionsPrefixPath()}SpatiaBlazor:Geocode:GooglePlaces";
 
-        var path = $"{pathPrefix}SpatiaBlazor:Geocode:Google";
-
-        services.AddOptions<GooglePlacesGeocodeConfigurationOptions>()
+        services.AddOptions<GoogleGeocodeConfigurationOptions>()
             .BindConfiguration(path)
             .ValidateDataAnnotations()
             .ValidateOnStart();
 
-        //todo use poly and http resilience
-        services.AddHttpClient(GooglePlacesGeocodeClient.HttpClientTag);
+        services.AddGeocodeAbstractions();
+
+        services.Add(new ServiceDescriptor(typeof(IGeocodeClient), typeof(GoogleGeocodeClient), serviceLifetime));
+        services.Add(new ServiceDescriptor(
+            typeof(IGeocodeRecordFactory<PlacesV1GeocodeDetail, GoogleGeocodeRecord>),
+            typeof(GoogleGeocodeRecordFactory),
+            serviceLifetime));
         return services;
     }
 }
