@@ -9,7 +9,7 @@ public sealed record GoogleAutocompleteRecord: IAutocompleteRecord
 {
     public required string Id { get; set; }
     public required string Descriptor { get; set; }
-    public ISet<string> Types { get; init; } = ImmutableHashSet<string>.Empty;
+    public ISet<string> Types { get; init; } = new HashSet<string>();
 
     [SetsRequiredMembers]
     public GoogleAutocompleteRecord(PlacesV1AutocompletePrediction record)

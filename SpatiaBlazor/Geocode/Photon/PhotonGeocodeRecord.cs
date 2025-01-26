@@ -29,7 +29,7 @@ public sealed record PhotonGeocodeRecord: IGeocodeRecord
     public string? Locality { get; set; }
     public string? CountyOrRegion { get; set; }
     public string? Country { get; set; }
-    public ISet<string> Types { get; init; } = ImmutableHashSet<string>.Empty;
+    public ISet<string> Types { get; init; } = new HashSet<string>();
 
     public bool IsValid { get; set; } = true;
 }

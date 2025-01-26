@@ -14,7 +14,7 @@ public sealed record PlacesV1GeocodeRequest(string Address) : IGeocodeRequest, I
     public Envelope? BoundingBox { get; set; }
     public string? Language { get; set; }
     public string? Region { get; set; }
-    public ISet<string> TypeFilters { get; set; } = ImmutableHashSet<string>.Empty;
+    public ISet<string> TypeFilters { get; set; } = new HashSet<string>();
 
     [SetsRequiredMembers]
     public PlacesV1GeocodeRequest(IGeocodeRequest request) : this(request.Query)

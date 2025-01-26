@@ -18,7 +18,7 @@ public sealed class GoogleGeocodeClient(
         var httpClient = httpClientFactory.CreateClient(GeocodeExtensions.HttpClientTag);
         httpClient.BaseAddress = new Uri(options.Value.AutocompleteApiUrl);
 
-        var googleRequest = new PlacesV1AutocompleteRequest(request);
+        var googleRequest = new PlacesV1AutocompleteRequest(request, options.Value);
         //todo: validation of google specific parameter values
 
         var response = await httpClient.GetAsync(

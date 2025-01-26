@@ -8,8 +8,12 @@ namespace SpatiaBlazor.Geocode.Google.V1;
 
 public sealed record PlacesV1AutocompleteRequest: IAutocompleteRequest, IRequest
 {
+    private const string GeocodeTypeFilter = "geocode";
+
+    private GoogleGeocodeConfigurationOptions _options;
+
     [SetsRequiredMembers]
-    public PlacesV1AutocompleteRequest(IAutocompleteRequest request)
+    public PlacesV1AutocompleteRequest(IAutocompleteRequest request, GoogleGeocodeConfigurationOptions options)
     {
         Query = request.Query;
         Limit = request.Limit;
@@ -21,6 +25,8 @@ public sealed record PlacesV1AutocompleteRequest: IAutocompleteRequest, IRequest
         TypeFilters = request.TypeFilters;
         Region = request.Region;
         IgnoreErrors = request.IgnoreErrors;
+
+        _options = options;
     }
 
     public required string Query { get; set; }
@@ -78,6 +84,15 @@ public sealed record PlacesV1AutocompleteRequest: IAutocompleteRequest, IRequest
         {
             builder.Append('&');
             builder.Append(CultureInfo.InvariantCulture, $"region={Region}");
+        }
+
+        if (!_options.UsePlaceDetailApi)
+        {
+            if (TypeFilters.Count == 0)
+            {
+                TypeFilters = new HashSet<string>();
+                TypeFilters.Add(GeocodeTypeFilter);
+            }
         }
 
         if (TypeFilters.Count > 0)

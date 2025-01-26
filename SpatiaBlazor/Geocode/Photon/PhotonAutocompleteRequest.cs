@@ -53,7 +53,7 @@ public sealed record PhotonAutocompleteRequest(string Query) : IAutocompleteRequ
     public string? Language { get; set; }
 
     /// <inheritdoc />>
-    public ISet<string> TypeFilters { get; set; } = ImmutableHashSet<string>.Empty;
+    public ISet<string> TypeFilters { get; set; } = new HashSet<string>();
 
     /// <summary>
     ///

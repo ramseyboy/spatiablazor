@@ -20,5 +20,5 @@ public sealed record GoogleGeocodeRecord : IGeocodeRecord
     public string? Country { get; set; }
     public string? CountryCode { get; set; }
     public string? ZipOrPostCode { get; set; }
-    public ISet<string> Types { get; init; } = ImmutableHashSet<string>.Empty;
+    public ISet<string> Types { get; init; } = new HashSet<string>();
 }

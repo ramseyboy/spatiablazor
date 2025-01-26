@@ -16,7 +16,7 @@ public sealed record AddressSuggestionsParametersViewModel : IAutocompleteReques
     public Point? BiasLocation { get; set; }
     public Envelope? BoundingBox { get; set; }
     public string? Language { get; set; }
-    public ISet<string> TypeFilters { get; set; } = ImmutableHashSet<string>.Empty;
+    public ISet<string> TypeFilters { get; set; } = new HashSet<string>();
     public int? Limit { get; set; }
     public double? Radius { get; set; }
     public double? Scale { get; set; }

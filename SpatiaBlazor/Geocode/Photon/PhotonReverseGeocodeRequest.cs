@@ -38,7 +38,7 @@ public sealed record PhotonReverseGeocodeRequest: IReverseGeocodeRequest, IReque
     /// <summary>
     ///
     /// </summary>
-    public ISet<string> TypeFilters { get; set; } = ImmutableHashSet<string>.Empty;
+    public ISet<string> TypeFilters { get; set; } = new HashSet<string>();
 
     /// <summary>
     ///

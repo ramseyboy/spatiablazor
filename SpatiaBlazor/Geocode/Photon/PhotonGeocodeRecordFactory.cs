@@ -59,13 +59,10 @@ public class PhotonGeocodeRecordFactory(
 
         var locationType = attr.GetOptionalValue(TypeAttribute)?.ToString();
 
-        ISet<string> typeSet = ImmutableHashSet<string>.Empty;
+        ISet<string> typeSet = new HashSet<string>();
         if (!string.IsNullOrEmpty(locationType))
         {
-            typeSet = new HashSet<string>
-            {
-                locationType
-            };
+            typeSet.Add(locationType);
         }
 
         Point geom;
