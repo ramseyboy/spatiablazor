@@ -3,6 +3,8 @@ using NetTopologySuite.Geometries;
 using ProjNet.CoordinateSystems;
 using SpatiaBlazor.Geocode.Abstractions;
 using SpatiaBlazor.Geocode.Google.V1;
+using SpatiaBlazor.Geocode.Google.V1.Geocode;
+using SpatiaBlazor.Geocode.Google.V1.Places;
 
 namespace SpatiaBlazor.Geocode.Google;
 
@@ -23,10 +25,8 @@ public static class GoogleGeocodeExtensions
         services.AddGeocodeAbstractions();
 
         services.Add(new ServiceDescriptor(typeof(IGeocodeClient), typeof(GoogleGeocodeClient), serviceLifetime));
-        services.Add(new ServiceDescriptor(
-            typeof(IGeocodeRecordFactory<PlacesV1GeocodeDetail, GoogleGeocodeRecord>),
-            typeof(GoogleGeocodeRecordFactory),
-            serviceLifetime));
+        services.Add(new ServiceDescriptor(typeof(PlacesV1GeocodeRecordFactory), typeof(PlacesV1GeocodeRecordFactory), serviceLifetime));
+        services.Add(new ServiceDescriptor(typeof(PlacesV1PlaceDetailRecordFactory), typeof(PlacesV1PlaceDetailRecordFactory), serviceLifetime));
         return services;
     }
 }

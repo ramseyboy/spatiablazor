@@ -2,7 +2,7 @@ using System.Globalization;
 using System.Text;
 using SpatiaBlazor.Geocode.Abstractions;
 
-namespace SpatiaBlazor.Geocode.Google.V1;
+namespace SpatiaBlazor.Geocode.Google.V1.Places;
 
 public sealed record PlacesV1DetailRequest: IRequest
 {

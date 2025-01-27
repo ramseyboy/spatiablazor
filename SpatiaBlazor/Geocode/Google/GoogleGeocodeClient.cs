@@ -3,6 +3,9 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using SpatiaBlazor.Geocode.Abstractions;
 using SpatiaBlazor.Geocode.Google.V1;
+using SpatiaBlazor.Geocode.Google.V1.Autocomplete;
+using SpatiaBlazor.Geocode.Google.V1.Geocode;
+using SpatiaBlazor.Geocode.Google.V1.Places;
 
 namespace SpatiaBlazor.Geocode.Google;
 
@@ -10,7 +13,8 @@ public sealed class GoogleGeocodeClient(
     IHttpClientFactory httpClientFactory,
     ILogger<GoogleGeocodeClient> logger,
     IOptions<GoogleGeocodeConfigurationOptions> options,
-    IGeocodeRecordFactory<PlacesV1GeocodeDetail, GoogleGeocodeRecord> recordFactory)
+    PlacesV1GeocodeRecordFactory geocodeRecordFactory,
+    PlacesV1PlaceDetailRecordFactory placeDetailRecordFactory)
     : IGeocodeClient
 {
     public async Task<IEnumerable<IAutocompleteRecord>> Autocomplete(IAutocompleteRequest request, CancellationToken token = default)
@@ -40,43 +44,73 @@ public sealed class GoogleGeocodeClient(
             .ToList();
     }
 
-    public async Task<IEnumerable<IGeocodeRecord>> Geocode(IAutocompleteRecord result, IGeocodeRequest request, CancellationToken token = default)
-    {
-        var googleRequest = new PlacesV1GeocodeRequest(result.Descriptor)
-        {
-            BoundingBox = request.BoundingBox,
-            Language = request.Language,
-            Region = request.Region,
-            TypeFilters = request.TypeFilters
-        };
-
-        return await Geocode(googleRequest, token);
-    }
-
-    public async Task<IEnumerable<IGeocodeRecord>> Geocode(IGeocodeRequest request, CancellationToken token = default)
+    public async Task<IEnumerable<IGeocodeRecord>> Geocode(IAutocompleteRecord result, IGeocodeRequest geocodeRequest, CancellationToken token = default)
     {
         var httpClient = httpClientFactory.CreateClient(GeocodeExtensions.HttpClientTag);
-        httpClient.BaseAddress = new Uri(options.Value.GeocodeApiUrl);
 
-        var googleRequest = new PlacesV1GeocodeRequest(request);
+        //todo extract this method to delegate
+        IRequest request;
+        if (options.Value.UsePlaceDetailApi)
+        {
+            httpClient.BaseAddress = new Uri(options.Value.PlaceDetailApiUrl);
+            request = new PlacesV1DetailRequest
+            {
+                PlaceId = result.Id,
+                Language = geocodeRequest.Language,
+                Region = geocodeRequest.Region,
+                TypeFilters = geocodeRequest.TypeFilters
+            };
+        }
+        else
+        {
+            httpClient.BaseAddress = new Uri(options.Value.GeocodeApiUrl);
+            request = new PlacesV1GeocodeRequest
+            {
+                Query = result.Descriptor,
+                BoundingBox = geocodeRequest.BoundingBox,
+                Language = geocodeRequest.Language,
+                Region = geocodeRequest.Region,
+                TypeFilters = geocodeRequest.TypeFilters
+            };
+        }
+
         //todo: validation of google specific parameter values
 
         var response = await httpClient.GetAsync(
-            $"{googleRequest.ToRequestPath()}&key={options.Value.ApiKey}",
+            $"{request.ToRequestPath()}&key={options.Value.ApiKey}",
             cancellationToken: token);
         var responseBody = await response.Content.ReadAsStreamAsync(token);
-        var rawRecord = await JsonSerializer.DeserializeAsync<PlacesGeocodeRecord>(
-            responseBody,
-            cancellationToken: token);
 
-        if (rawRecord is null)
+        if (options.Value.UsePlaceDetailApi)
         {
-            logger.LogWarning("Could not deserialize google places v1 geocode json response or response was null or empty");
-            return [];
-        }
+            var rawRecord = await JsonSerializer.DeserializeAsync<PlacesV1DetailRecord>(
+                responseBody,
+                cancellationToken: token);
 
-        return rawRecord.Results
-            .Select(recordFactory.Create)
-            .ToList();
+            if (rawRecord?.Result is null)
+            {
+                logger.LogWarning("Could not deserialize google places v1 geocode json response or response was null or empty");
+                return [];
+            }
+
+            var placeRequest = request as PlacesV1DetailRequest;
+            return [placeDetailRecordFactory.Create(rawRecord.Result, placeRequest!.PlaceId)];
+        }
+        else
+        {
+            var rawRecord = await JsonSerializer.DeserializeAsync<PlacesV1GeocodeRecord>(
+                responseBody,
+                cancellationToken: token);
+
+            if (rawRecord is null)
+            {
+                logger.LogWarning("Could not deserialize google places v1 geocode json response or response was null or empty");
+                return [];
+            }
+
+            return rawRecord.Results
+                .Select(geocodeRecordFactory.Create)
+                .ToList();
+        }
     }
 }

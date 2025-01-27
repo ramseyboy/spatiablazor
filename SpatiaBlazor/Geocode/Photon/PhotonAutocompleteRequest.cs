@@ -9,11 +9,12 @@ using SpatiaBlazor.Geocode.Abstractions;
 namespace SpatiaBlazor.Geocode.Photon;
 
 [method: SetsRequiredMembers]
-public sealed record PhotonAutocompleteRequest(string Query) : IAutocompleteRequest, IRequest
+public sealed record PhotonAutocompleteRequest() : IAutocompleteRequest, IRequest
 {
     [SetsRequiredMembers]
-    public PhotonAutocompleteRequest(IAutocompleteRequest request) : this(request.Query)
+    public PhotonAutocompleteRequest(IAutocompleteRequest request): this()
     {
+        Query = request.Query;
         Limit = request.Limit;
         BiasLocation = request.BiasLocation;
         Radius = request.Radius;
@@ -27,7 +28,7 @@ public sealed record PhotonAutocompleteRequest(string Query) : IAutocompleteRequ
 
     /// <inheritdoc />>
     [Required(AllowEmptyStrings = false)]
-    public required string Query { get; set; } = Query;
+    public required string Query { get; set; }
 
     /// <inheritdoc />>
     [Range(1, 30)]

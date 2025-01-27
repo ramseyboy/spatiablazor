@@ -7,5 +7,5 @@ public interface IDescriptorFactory
     /// </summary>
     /// <param name="record"></param>
     /// <returns>The structured label or empty if no valid properties or fallbacks</returns>
-    string Create(object record);
+    string Create<TRecord>(TRecord record);
 }

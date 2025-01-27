@@ -10,8 +10,7 @@ namespace SpatiaBlazor.Geocode.Photon;
 public class PhotonGeocodeRecordFactory(
     [FromKeyedServices(GeocodeExtensions.WGS85GeometryFactoryTag)]
     GeometryFactory geometryFactory,
-    IDescriptorFactory descriptorFactory):
-    IGeocodeRecordFactory<IFeature, PhotonGeocodeRecord>
+    IDescriptorFactory descriptorFactory)
 {
     private const string OsmIdAttribute = "osm_id";
     //unused for now
@@ -42,6 +41,12 @@ public class PhotonGeocodeRecordFactory(
         IsValid = false
     };
 
+    /// <summary>
+    /// Creates a geocode record instance given the input value
+    /// </summary>
+    /// <param name="input"></param>
+    /// <exception cref="ArgumentException">throws if the input value is invalid or missing required data</exception>
+    /// <returns>A valid geocode record</returns>
     public PhotonGeocodeRecord Create(IFeature feature)
     {
         if (feature.Geometry is null || feature.Geometry.IsEmpty || feature.Attributes is null)

@@ -1,24 +1,14 @@
 using Microsoft.Extensions.DependencyInjection;
 using NetTopologySuite.Geometries;
 using SpatiaBlazor.Geocode.Abstractions;
-using SpatiaBlazor.Geocode.Google.V1;
+using static SpatiaBlazor.Geocode.Google.V1.PlacesV1AddressComponent;
 
-namespace SpatiaBlazor.Geocode.Google;
+namespace SpatiaBlazor.Geocode.Google.V1.Geocode;
 
-public class GoogleGeocodeRecordFactory(
+public class PlacesV1GeocodeRecordFactory(
     [FromKeyedServices(GeocodeExtensions.WGS85GeometryFactoryTag)]
-    GeometryFactory geometryFactory) :
-    IGeocodeRecordFactory<PlacesV1GeocodeDetail, GoogleGeocodeRecord>
+    GeometryFactory geometryFactory)
 {
-    private const string StateAttribute = "administrative_area_level_1";
-    private const string CityAttribute = "locality";
-    private const string CountryAttribute = "country";
-    private const string HouseNumberAttribute = "street_number";
-    private const string PostCodeAttribute = "postal_code";
-    private const string StreetAttribute = "route";
-    private const string LocalityAttribute = "neighborhood";
-    private const string CountyAttribute = "administrative_area_level_2";
-
     public GoogleGeocodeRecord Empty { get; } = new()
     {
         Id = string.Empty,
@@ -27,6 +17,12 @@ public class GoogleGeocodeRecordFactory(
         BoundingBox = new Envelope()
     };
 
+    /// <summary>
+    /// Creates a geocode record instance given the input value
+    /// </summary>
+    /// <param name="detail"></param>
+    /// <exception cref="ArgumentException">throws if the input value is invalid or missing required data</exception>
+    /// <returns>A valid geocode record</returns>
     public GoogleGeocodeRecord Create(PlacesV1GeocodeDetail detail)
     {
         var addressMap = detail.AddressComponents

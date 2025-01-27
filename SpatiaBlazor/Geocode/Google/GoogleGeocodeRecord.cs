@@ -7,7 +7,7 @@ namespace SpatiaBlazor.Geocode.Google;
 public sealed record GoogleGeocodeRecord : IGeocodeRecord
 {
     public required string Id { get; set; }
-    public required string Descriptor { get; set; }
+    public string Descriptor { get; set; } = string.Empty;
     public required Point Geom { get; set; }
     public required Envelope BoundingBox { get; set; }
     public string? Name { get; set; }

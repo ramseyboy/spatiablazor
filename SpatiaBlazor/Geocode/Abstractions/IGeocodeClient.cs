@@ -7,10 +7,6 @@ public interface IGeocodeClient
         CancellationToken token = default);
 
     public Task<IEnumerable<IGeocodeRecord>> Geocode(
-        IGeocodeRequest request,
-        CancellationToken token = default);
-
-    public Task<IEnumerable<IGeocodeRecord>> Geocode(
         IAutocompleteRecord result,
         IGeocodeRequest request,
         CancellationToken token = default);

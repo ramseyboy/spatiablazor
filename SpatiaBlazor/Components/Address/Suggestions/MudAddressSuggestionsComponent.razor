@@ -32,7 +32,7 @@
     ToStringFunc="@(model => model?.Descriptor ?? string.Empty)"
     MaxItems="SuggestionsParameters.Limit"
     ShowProgressIndicator="true"
-    ResetValueOnEmptyText="true"
+    ResetValueOnEmptyText="false"
     CoerceText="false"
     Clearable="Clearable"
     ValueChanged="OnAutocompleteSelected"
@@ -75,7 +75,7 @@
         StateHasChanged();
     }
 
-    private async Task OnAutocompleteSelected(IAutocompleteRecord record)
+    private async Task OnAutocompleteSelected(IAutocompleteRecord? record)
     {
         var geocodeResult = await Presenter.SuggestionClicked(record, _cts.Token);
         await ValueChanged.InvokeAsync(geocodeResult);

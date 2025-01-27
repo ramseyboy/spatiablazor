@@ -21,10 +21,7 @@ public static class PhotonGeocodeExtensions
         services.AddGeocodeAbstractions();
 
         services.Add(new ServiceDescriptor(typeof(IGeocodeClient), typeof(PhotonGeocodeClient), serviceLifetime));
-        services.Add(new ServiceDescriptor(
-            typeof(IGeocodeRecordFactory<IFeature, PhotonGeocodeRecord>),
-            typeof(PhotonGeocodeRecordFactory),
-            serviceLifetime));
+        services.Add(new ServiceDescriptor(typeof(PhotonGeocodeRecordFactory), typeof(PhotonGeocodeRecordFactory), serviceLifetime));
         return services;
     }
 }

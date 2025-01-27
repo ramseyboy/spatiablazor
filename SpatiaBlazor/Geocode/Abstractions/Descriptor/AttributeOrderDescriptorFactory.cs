@@ -5,9 +5,9 @@ namespace SpatiaBlazor.Geocode.Abstractions.Descriptor;
 
 internal sealed class AttributeOrderDescriptorFactory: IDescriptorFactory
 {
-    public string Create(object record)
+    public string Create<TRecord>(TRecord record)
     {
-        var orderedProperties = record.GetType().GetProperties()
+        var orderedProperties = typeof(TRecord).GetProperties()
             .Where(pi => pi.GetCustomAttribute<DescriptorOrderAttribute>() is not null)
             .Where(pi => pi.GetValue(record) is not null || pi.GetCustomAttribute<DescriptorOrderAttribute>()!.FallbackLabel is not null)
             .OrderBy(pi => pi.GetCustomAttribute<DescriptorOrderAttribute>()!.Order)

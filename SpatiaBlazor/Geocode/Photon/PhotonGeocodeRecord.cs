@@ -9,7 +9,7 @@ namespace SpatiaBlazor.Geocode.Photon;
 public sealed record PhotonGeocodeRecord: IGeocodeRecord
 {
     public required string Id { get; set; }
-    public string Descriptor { get; set; }
+    public string Descriptor { get; set; } = string.Empty;
     public required Point Geom { get; set; }
     public required Envelope BoundingBox { get; set; }
     [DescriptorOrder(Order = 1, Delimiter = ",")]

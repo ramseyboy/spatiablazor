@@ -2,6 +2,7 @@ using System.Collections.Immutable;
 using System.Diagnostics.CodeAnalysis;
 using SpatiaBlazor.Geocode.Abstractions;
 using SpatiaBlazor.Geocode.Google.V1;
+using SpatiaBlazor.Geocode.Google.V1.Autocomplete;
 
 namespace SpatiaBlazor.Geocode.Google;
 

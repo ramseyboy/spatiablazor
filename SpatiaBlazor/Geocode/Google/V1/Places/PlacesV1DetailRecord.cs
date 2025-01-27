@@ -1,6 +1,6 @@
 using System.Text.Json.Serialization;
 
-namespace SpatiaBlazor.Geocode.Google.V1;
+namespace SpatiaBlazor.Geocode.Google.V1.Places;
 
 public sealed record PlacesV1DetailRecord
 {

@@ -1,4 +1,3 @@
-using System.Net.Http.Json;
 using System.Text.Json;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -11,7 +10,7 @@ public sealed class PhotonGeocodeClient(
     IHttpClientFactory httpClientFactory,
     ILogger<PhotonGeocodeClient> logger,
     IOptions<PhotonGeocodeConfigurationOptions> options,
-    IGeocodeRecordFactory<IFeature, PhotonGeocodeRecord> recordFactory)
+    PhotonGeocodeRecordFactory recordFactory)
     : IGeocodeClient
 {
     private string BaseUrl => options.Value.ApiUrl;
@@ -73,10 +72,16 @@ public sealed class PhotonGeocodeClient(
         return [];
     }
 
-    public async Task<IEnumerable<IGeocodeRecord>> Geocode(IGeocodeRequest request, CancellationToken token = default)
+    public async Task<IEnumerable<IGeocodeRecord>> Geocode(IAutocompleteRecord result, IGeocodeRequest request, CancellationToken token = default)
     {
-        var autoCompleteRequest = new PhotonAutocompleteRequest(request.Query)
+        if (result is PhotonGeocodeRecord record)
         {
+            return [record];
+        }
+
+        var autoCompleteRequest = new PhotonAutocompleteRequest
+        {
+            Query = result.Descriptor,
             BoundingBox = request.BoundingBox,
             Language = request.Language,
             Region = request.Region,
@@ -85,23 +90,5 @@ public sealed class PhotonGeocodeClient(
 
         var results = await Autocomplete(autoCompleteRequest, token);
         return results.Cast<PhotonGeocodeRecord>();
-    }
-
-    public async Task<IEnumerable<IGeocodeRecord>> Geocode(IAutocompleteRecord result, IGeocodeRequest request, CancellationToken token = default)
-    {
-        if (result is PhotonGeocodeRecord record)
-        {
-            return [record];
-        }
-
-        var autoCompleteRequest = new PhotonAutocompleteRequest(result.Descriptor)
-        {
-            BoundingBox = request.BoundingBox,
-            Language = request.Language,
-            Region = request.Region,
-            TypeFilters = request.TypeFilters
-        };
-
-        return await Geocode(autoCompleteRequest, token);
     }
 }

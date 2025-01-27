@@ -1,6 +1,6 @@
 using System.Text.Json.Serialization;
 
-namespace SpatiaBlazor.Geocode.Google.V1;
+namespace SpatiaBlazor.Geocode.Google.V1.Autocomplete;
 
 public record PlacesV1AutocompleteRecord
 {

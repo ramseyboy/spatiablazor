@@ -1,8 +1,8 @@
 using System.Text.Json.Serialization;
 
-namespace SpatiaBlazor.Geocode.Google.V1;
+namespace SpatiaBlazor.Geocode.Google.V1.Geocode;
 
-public sealed record PlacesGeocodeRecord
+public sealed record PlacesV1GeocodeRecord
 {
     [JsonPropertyName("results")]
     public IEnumerable<PlacesV1GeocodeDetail> Results { get; set; } = [];

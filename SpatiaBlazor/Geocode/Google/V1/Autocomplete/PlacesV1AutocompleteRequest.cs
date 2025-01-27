@@ -4,7 +4,7 @@ using System.Text;
 using NetTopologySuite.Geometries;
 using SpatiaBlazor.Geocode.Abstractions;
 
-namespace SpatiaBlazor.Geocode.Google.V1;
+namespace SpatiaBlazor.Geocode.Google.V1.Autocomplete;
 
 public sealed record PlacesV1AutocompleteRequest: IAutocompleteRequest, IRequest
 {
