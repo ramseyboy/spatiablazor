@@ -2,17 +2,20 @@ using SpatiaBlazor.Demo.Client.Pages;
 using SpatiaBlazor.Demo.Components;
 using MudBlazor.Services;
 using SpatiaBlazor.Components.Address.Suggestions;
+using SpatiaBlazor.Geocode.Google;
 using SpatiaBlazor.Geocode.Photon;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddRazorComponents()
+    .AddInteractiveServerComponents()
     .AddInteractiveWebAssemblyComponents();
 
 builder.Services.AddMudServices();
 
-builder.Services.AddPhotonGeocodeClient(configSectionPath: "Test");
+builder.Services.AddPhotonGeocodeClient();
+builder.Services.AddGooglePlacesGeocodeClient();
 builder.Services.AddAddressSuggestions();
 
 var app = builder.Build();
@@ -35,6 +38,7 @@ app.UseStaticFiles();
 app.UseAntiforgery();
 
 app.MapRazorComponents<App>()
+    .AddInteractiveServerRenderMode()
     .AddInteractiveWebAssemblyRenderMode()
     .AddAdditionalAssemblies(typeof(Home).Assembly);
 

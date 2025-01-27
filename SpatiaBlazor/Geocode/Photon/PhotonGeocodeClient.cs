@@ -1,4 +1,3 @@
-using System.Net.Http.Json;
 using System.Text.Json;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -10,16 +9,15 @@ namespace SpatiaBlazor.Geocode.Photon;
 public sealed class PhotonGeocodeClient(
     IHttpClientFactory httpClientFactory,
     ILogger<PhotonGeocodeClient> logger,
-    IOptions<PhotonGeocodeConfigurationOptions> options)
+    IOptions<PhotonGeocodeConfigurationOptions> options,
+    PhotonGeocodeRecordFactory recordFactory)
     : IGeocodeClient
 {
-    public const string HttpClientTag = "PhotonGeocodeClient";
-
     private string BaseUrl => options.Value.ApiUrl;
 
-    public async Task<IEnumerable<IGeocodeRecord>> FromAddress(IAutocompleteRequest request, CancellationToken token = default)
+    public async Task<IEnumerable<IAutocompleteRecord>> Autocomplete(IAutocompleteRequest request, CancellationToken token = default)
     {
-        var httpClient = httpClientFactory.CreateClient(HttpClientTag);
+        var httpClient = httpClientFactory.CreateClient(GeocodeExtensions.HttpClientTag);
         httpClient.BaseAddress = new Uri(BaseUrl);
 
         var photonRequest = new PhotonAutocompleteRequest(request);
@@ -50,22 +48,18 @@ public sealed class PhotonGeocodeClient(
                 {
                     try
                     {
-                        return new PhotonGeocodeRecord(feature);
+                        return recordFactory.Create(feature);
                     }
                     catch (ArgumentException e)
                     {
-                        if (request.IgnoreErrors)
-                        {
-                            logger.LogError(e, "Encountered error when parsing feature for query {q}", request.Query);
-                            return new PhotonGeocodeRecord
-                            {
-                                IsValid = false
-                            };
-                        }
-                        else
+                        if (!request.IgnoreErrors)
                         {
                             throw;
                         }
+
+                        logger.LogError(e, "Encountered error when parsing feature for query {q}", request.Query);
+                        return recordFactory.Empty;
+
                     }
                 })
                 .Where(x => x.IsValid)
@@ -78,9 +72,23 @@ public sealed class PhotonGeocodeClient(
         return [];
     }
 
-    public async Task<IEnumerable<IGeocodeRecord>> FromPoint(IReverseGeocodeRequest request, CancellationToken token = default)
+    public async Task<IEnumerable<IGeocodeRecord>> Geocode(IAutocompleteRecord result, IGeocodeRequest request, CancellationToken token = default)
     {
-        //todo implement reverse
-        return [];
+        if (result is PhotonGeocodeRecord record)
+        {
+            return [record];
+        }
+
+        var autoCompleteRequest = new PhotonAutocompleteRequest
+        {
+            Query = result.Descriptor,
+            BoundingBox = request.BoundingBox,
+            Language = request.Language,
+            Region = request.Region,
+            TypeFilters = request.TypeFilters
+        };
+
+        var results = await Autocomplete(autoCompleteRequest, token);
+        return results.Cast<PhotonGeocodeRecord>();
     }
 }

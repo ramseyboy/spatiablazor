@@ -1,14 +1,14 @@
-using SpatiaBlazor.Components.Attributes.Label;
 using SpatiaBlazor.Geocode.Abstractions;
+using SpatiaBlazor.Geocode.Abstractions.Descriptor;
 
-namespace SpatiaBlazor.Tests.Components.Address.Label;
+namespace SpatiaBlazor.Tests.Geocode.Abstractions.Descriptor;
 
-public class LabelFactoryTest
+public class DescriptorFactoryTest
 {
     [Fact(DisplayName = "Given an address with 0 non-empty properties and 0 fallbacks, When label is created, Then it should throw")]
     public void TestZeroProps()
     {
-        var factory = new DefaultLabelFactory();
+        var factory = new AttributeOrderDescriptorFactory();
 
         var record = new TestAddressRecord();
 
@@ -20,7 +20,7 @@ public class LabelFactoryTest
     [Fact(DisplayName = "Given an address with only 1 non-fallback, non-empty property, When label is created, Then label should have only the property")]
     public void TestOneProp()
     {
-        var factory = new DefaultLabelFactory();
+        var factory = new AttributeOrderDescriptorFactory();
 
         var record = new TestAddressRecord
         {
@@ -35,7 +35,7 @@ public class LabelFactoryTest
     [Fact(DisplayName = "Given an address with 2 non-fallback, non-empty properties, When label is created, Then label should have the properties with specified delimiter")]
     public void TestTwoProp()
     {
-        var factory = new DefaultLabelFactory();
+        var factory = new AttributeOrderDescriptorFactory();
 
         var record = new TestAddressRecord
         {
@@ -51,7 +51,7 @@ public class LabelFactoryTest
     [Fact(DisplayName = "Given an address with 1 non-fallback, non-empty properties and 1 fallback label, When label is created, Then label should have the property and the fallback with specified delimiter")]
     public void TestOnePropOneFallback()
     {
-        var factory = new DefaultLabelFactory();
+        var factory = new AttributeOrderDescriptorFactory();
 
         var record = new TestAddressRecordWithFallback
         {
@@ -66,7 +66,7 @@ public class LabelFactoryTest
     [Fact(DisplayName = "Given an address with multiple non-empty properties, When label is created, Then label should have the properties without a delimiter at the end")]
     public void TestDelimiterAtEnd()
     {
-        var factory = new DefaultLabelFactory();
+        var factory = new AttributeOrderDescriptorFactory();
 
         var record = new TestAddressRecord
         {
@@ -84,19 +84,19 @@ public class LabelFactoryTest
 
 public class TestAddressRecord: IAddressRecord
 {
-    [LabelOrder(Order = 1, Delimiter = ",")]
+    [DescriptorOrder(Order = 1, Delimiter = ",")]
     public string? Name { get; set; }
-    [LabelOrder(Order = 2, Delimiter = " ")]
+    [DescriptorOrder(Order = 2, Delimiter = " ")]
     public string? HouseNumber { get; set; }
-    [LabelOrder(Order = 3, Delimiter = ",")]
+    [DescriptorOrder(Order = 3, Delimiter = ",")]
     public string? Street { get; set; }
-    [LabelOrder(Order = 4, Delimiter = ",")]
+    [DescriptorOrder(Order = 4, Delimiter = ",")]
     public string? City { get; set; }
-    [LabelOrder(Order = 5, Delimiter = ",")]
+    [DescriptorOrder(Order = 5, Delimiter = ",")]
     public string? ZipOrPostCode { get; set; }
-    [LabelOrder(Order = 6, Delimiter = ",")]
+    [DescriptorOrder(Order = 6, Delimiter = ",")]
     public string? StateOrProvince { get; set; }
-    [LabelOrder(Order = 7)]
+    [DescriptorOrder(Order = 7)]
     public string? CountryCode { get; set; }
     public string? Locality { get; set; }
     public string? CountyOrRegion { get; set; }
@@ -105,19 +105,19 @@ public class TestAddressRecord: IAddressRecord
 
 public class TestAddressRecordWithFallback: IAddressRecord
 {
-    [LabelOrder(Order = 1, Delimiter = ",")]
+    [DescriptorOrder(Order = 1, Delimiter = ",")]
     public string? Name { get; set; }
-    [LabelOrder(Order = 2)]
+    [DescriptorOrder(Order = 2)]
     public string? HouseNumber { get; set; }
-    [LabelOrder(Order = 3, Delimiter = ",")]
+    [DescriptorOrder(Order = 3, Delimiter = ",")]
     public string? Street { get; set; }
-    [LabelOrder(Order = 4, Delimiter = ",")]
+    [DescriptorOrder(Order = 4, Delimiter = ",")]
     public string? City { get; set; }
-    [LabelOrder(Order = 5, Delimiter = ",")]
+    [DescriptorOrder(Order = 5, Delimiter = ",")]
     public string? ZipOrPostCode { get; set; }
-    [LabelOrder(Order = 6, Delimiter = ",", FallbackLabel = "N/A")]
+    [DescriptorOrder(Order = 6, Delimiter = ",", FallbackLabel = "N/A")]
     public string? StateOrProvince { get; set; }
-    [LabelOrder(Order = 7)]
+    [DescriptorOrder(Order = 7)]
     public string? CountryCode { get; set; }
     public string? Locality { get; set; }
     public string? CountyOrRegion { get; set; }

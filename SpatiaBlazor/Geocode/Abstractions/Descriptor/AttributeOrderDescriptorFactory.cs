@@ -1,16 +1,16 @@
 using System.Reflection;
 using System.Text;
 
-namespace SpatiaBlazor.Components.Attributes.Label;
+namespace SpatiaBlazor.Geocode.Abstractions.Descriptor;
 
-internal sealed class DefaultLabelFactory: ILabelFactory
+internal sealed class AttributeOrderDescriptorFactory: IDescriptorFactory
 {
-    public string Create(object record)
+    public string Create<TRecord>(TRecord record)
     {
-        var orderedProperties = record.GetType().GetProperties()
-            .Where(pi => pi.GetCustomAttribute<LabelOrderAttribute>() is not null)
-            .Where(pi => pi.GetValue(record) is not null || pi.GetCustomAttribute<LabelOrderAttribute>()!.FallbackLabel is not null)
-            .OrderBy(pi => pi.GetCustomAttribute<LabelOrderAttribute>()!.Order)
+        var orderedProperties = typeof(TRecord).GetProperties()
+            .Where(pi => pi.GetCustomAttribute<DescriptorOrderAttribute>() is not null)
+            .Where(pi => pi.GetValue(record) is not null || pi.GetCustomAttribute<DescriptorOrderAttribute>()!.FallbackLabel is not null)
+            .OrderBy(pi => pi.GetCustomAttribute<DescriptorOrderAttribute>()!.Order)
             .ToList();
 
         var stringBuilder = new StringBuilder();
@@ -18,7 +18,7 @@ internal sealed class DefaultLabelFactory: ILabelFactory
         {
             var orderedProperty = orderedProperties[i];
 
-            var attr = orderedProperty.GetCustomAttribute<LabelOrderAttribute>();
+            var attr = orderedProperty.GetCustomAttribute<DescriptorOrderAttribute>();
 
             var delimiter = attr!.Delimiter;
             var val = orderedProperty.GetValue(record)?.ToString();

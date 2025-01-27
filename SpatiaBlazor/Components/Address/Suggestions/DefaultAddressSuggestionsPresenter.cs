@@ -3,7 +3,7 @@ using SpatiaBlazor.Validation;
 
 namespace SpatiaBlazor.Components.Address.Suggestions;
 
-internal sealed class DefaultSuggestionsPresenter(IGeocodeClient suggestionsClient) : ISuggestionsPresenter
+internal sealed class DefaultAddressSuggestionsPresenter(IGeocodeClient suggestionsClient) : IAddressSuggestionsPresenter
 {
     private ISuggestionsView? _view;
 
@@ -15,7 +15,7 @@ internal sealed class DefaultSuggestionsPresenter(IGeocodeClient suggestionsClie
     }
 
     /// <inheritdoc />>
-    public async Task<IEnumerable<IGeocodeResultsViewModel>> AutocompleteSuggestions(CancellationToken token)
+    public async Task<IEnumerable<IAutocompleteRecord>> Suggest(CancellationToken token)
     {
         if (token.IsCancellationRequested)
         {
@@ -38,10 +38,22 @@ internal sealed class DefaultSuggestionsPresenter(IGeocodeClient suggestionsClie
                 validationResults.ToDictionary());
         }
 
-        var suggestions = await suggestionsClient.FromAddress(_view.SuggestionsParameters, token);
-        return suggestions
-            .Select(x => new DefaultGeocodeResultsViewModel(x))
-            .ToList();
+        var suggestions = await suggestionsClient.Autocomplete(_view.SuggestionsParameters, token);
+        return suggestions;
+    }
+
+    public async Task<IGeocodeRecord> SuggestionClicked(IAutocompleteRecord record, CancellationToken token)
+    {
+        if (_view is null)
+        {
+            //todo
+            throw new ApplicationException();
+        }
+
+        var viewModel = _view.SuggestionsParameters;
+        var geocodeRecords = await suggestionsClient.Geocode(record, viewModel, token);
+        //todo: show dialog to accept record if multiple or show error if none
+        return geocodeRecords.First();
     }
 
     public void Dispose()

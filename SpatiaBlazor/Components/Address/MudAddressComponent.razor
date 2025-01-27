@@ -3,6 +3,7 @@
 @using NetTopologySuite.Geometries
 @using SpatiaBlazor.Components.Address.Suggestions
 @using SpatiaBlazor.Components.Extensions
+@using SpatiaBlazor.Geocode.Abstractions
 @implements SpatiaBlazor.Components.Address.IAddressFormView
 @inherits MudComponentBase
 
@@ -93,11 +94,11 @@
     
     private AddressViewModel _viewModel = new();
 
-    private IGeocodeResultsViewModel? _geocodeSelection;
+    private IGeocodeRecord? _geocodeSelection;
 
     private MudForm? _form;
 
-    private MudAutocomplete<IGeocodeResultsViewModel>? _suggestions;
+    private MudAddressSuggestionsComponent? _suggestions;
 
     private RenderFragment MudTextFragment<T>(Expression<Func<AddressViewModel, T>> propertyExpression, Action<AddressViewModel, T> setFunc, bool autoGrow = false) => __builder =>
     {
@@ -129,7 +130,7 @@
         await ValueChanged.InvokeAsync(_viewModel);
     }
 
-    private async Task OnSelectionChanged(IGeocodeResultsViewModel selected)
+    private async Task OnSelectionChanged(IGeocodeRecord selected)
     {
         _geocodeSelection = selected;
         if (_geocodeSelection is not null)

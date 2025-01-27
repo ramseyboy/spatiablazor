@@ -1,18 +1,65 @@
-@inherits MudAutocomplete<IGeocodeResultsViewModel>
+@inherits MudBaseInput<IGeocodeRecord>
 @implements ISuggestionsView
+@using SpatiaBlazor.Geocode.Abstractions
 @implements IDisposable
-@inject ISuggestionsPresenter Presenter
+@inject IAddressSuggestionsPresenter Presenter
 
 @{
     base.BuildRenderTree(__builder);
 }
 
+<MudAutocomplete
+    T="IAutocompleteRecord?"
+    Variant="Variant"
+    ShrinkLabel="ShrinkLabel"
+    Label="@Label"
+    Disabled="@Disabled"
+    ReadOnly="@ReadOnly"
+    Required="@Required"
+    FullWidth="@FullWidth"
+    Immediate="Immediate"
+    Underline="Underline"
+    HelperText="@SuggestionsParameters.HelpText"
+    HelperTextOnFocus="HelperTextOnFocus"
+    AdornmentIcon="@(AdornmentIcon ?? Icons.Material.Filled.Search)"
+    AdornmentAriaLabel="@(AdornmentAriaLabel ?? "search")"
+    IconSize="IconSize"
+    Typo="Typo"
+    Placeholder="@Placeholder"
+    DebounceInterval="@SuggestionsParameters.DebounceInterval"
+    MinCharacters="@SuggestionsParameters.MinQueryLength"
+    SearchFunc="@OnSearch"
+    ToStringFunc="@(model => model?.Descriptor ?? string.Empty)"
+    MaxItems="SuggestionsParameters.Limit"
+    ShowProgressIndicator="true"
+    ResetValueOnEmptyText="false"
+    CoerceText="false"
+    Clearable="Clearable"
+    ValueChanged="OnAutocompleteSelected"
+    Value="selectedAutocompleteValue"
+    @ref="_autocompleteRef"
+    />
+
 @code {
-
-    [Parameter] public AddressSuggestionsParametersViewModel? SuggestionsParameters { get; set; }
     
-    private readonly CancellationTokenSource _cts = new ();
+    /// <summary>
+    /// Displays the Clear icon button.
+    /// </summary>
+    /// <remarks>
+    /// Defaults to <c>false</c>.  When <c>true</c>, an icon is displayed which, when clicked, clears the Text and Value.  Use the <c>ClearIcon</c> property to control the Clear button icon.
+    /// </remarks>
+    [Parameter]
+    [Category(CategoryTypes.FormComponent.Behavior)]
+    public bool Clearable { get; set; }
+    
+    [Parameter] public AddressSuggestionsParametersViewModel SuggestionsParameters { get; set; } = new();
 
+    private IAutocompleteRecord? selectedAutocompleteValue;
+    
+    private MudAutocomplete<IAutocompleteRecord>? _autocompleteRef;
+    
+    private readonly CancellationTokenSource _cts = new();
+    
     protected override Task OnInitializedAsync()
     {
         return Presenter.InitializeAsync(this, _cts.Token);
@@ -20,19 +67,7 @@
 
     protected override void OnParametersSet()
     {
-        SuggestionsParameters ??= new AddressSuggestionsParametersViewModel();
-        DebounceInterval = SuggestionsParameters.DebounceInterval;
-        MinCharacters = SuggestionsParameters.MinQueryLength;
-        SearchFunc = OnSearch;
-        ToStringFunc = model => model?.Label();
-        MaxItems = SuggestionsParameters.Limit;
-        ShowProgressIndicator = true;
-        ResetValueOnEmptyText = true;
-        CoerceText = true;
-        Immediate = true;
-        AdornmentIcon = Icons.Material.Filled.Search;
-        AdornmentAriaLabel = "search";
-        HelperText = SuggestionsParameters.HelpText;
+        selectedAutocompleteValue = Value;
     }
 
     public void TriggerRender()
@@ -40,14 +75,32 @@
         StateHasChanged();
     }
 
-    private async Task<IEnumerable<IGeocodeResultsViewModel>> OnSearch(string query, CancellationToken token)
+    private async Task OnAutocompleteSelected(IAutocompleteRecord? record)
+    {
+        var geocodeResult = await Presenter.SuggestionClicked(record, _cts.Token);
+        await ValueChanged.InvokeAsync(geocodeResult);
+    }
+
+    private async Task<IEnumerable<IAutocompleteRecord>> OnSearch(string query, CancellationToken token)
     {
         if (SuggestionsParameters is null || string.IsNullOrWhiteSpace(query))
         {
-            return Array.Empty<IGeocodeResultsViewModel>();
+            return Array.Empty<IAutocompleteRecord>();
         }
+
         SuggestionsParameters.Query = query;
-        return await Presenter.AutocompleteSuggestions(token);
+        return await Presenter.Suggest(token);
+    }
+
+    /// <summary>
+    /// Resets the Text and Value, and closes the drop-down if it is open.
+    /// </summary>
+    public async Task ClearAsync()
+    {
+        if (_autocompleteRef is not null)
+        {
+            await _autocompleteRef.ClearAsync();
+        }
     }
     
     public void Dispose()
@@ -55,4 +108,5 @@
         _cts.Cancel();
         _cts.Dispose();
     }
+
 }

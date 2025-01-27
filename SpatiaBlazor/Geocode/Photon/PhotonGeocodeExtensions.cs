@@ -1,4 +1,5 @@
 using Microsoft.Extensions.DependencyInjection;
+using NetTopologySuite.Features;
 using SpatiaBlazor.Geocode.Abstractions;
 
 namespace SpatiaBlazor.Geocode.Photon;
@@ -11,21 +12,16 @@ public static class PhotonGeocodeExtensions
         string? configSectionPath = null)
 
     {
-        var pathPrefix = string.Empty;
-        if (configSectionPath is not null)
-        {
-            pathPrefix = !configSectionPath.EndsWith(':') ? $"{configSectionPath}:" : configSectionPath;
-        }
-
-        var path = $"{pathPrefix}SpatiaBlazor:Geocode:Photon";
+        var path = $"{configSectionPath.OptionsPrefixPath()}SpatiaBlazor:Geocode:Photon";
         services.AddOptions<PhotonGeocodeConfigurationOptions>()
             .BindConfiguration(path)
             .ValidateOnStart()
             .ValidateDataAnnotations();
 
-        //todo use poly and http resilience
-        services.AddHttpClient(PhotonGeocodeClient.HttpClientTag);
+        services.AddGeocodeAbstractions();
+
         services.Add(new ServiceDescriptor(typeof(IGeocodeClient), typeof(PhotonGeocodeClient), serviceLifetime));
+        services.Add(new ServiceDescriptor(typeof(PhotonGeocodeRecordFactory), typeof(PhotonGeocodeRecordFactory), serviceLifetime));
         return services;
     }
 }

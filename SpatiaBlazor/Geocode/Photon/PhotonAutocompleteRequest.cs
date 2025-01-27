@@ -1,5 +1,6 @@
 using System.Collections.Immutable;
 using System.ComponentModel.DataAnnotations;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Text;
 using NetTopologySuite.Geometries;
@@ -7,34 +8,41 @@ using SpatiaBlazor.Geocode.Abstractions;
 
 namespace SpatiaBlazor.Geocode.Photon;
 
-public record PhotonAutocompleteRequest : IAutocompleteRequest, IGeocodeRequest
+[method: SetsRequiredMembers]
+public sealed record PhotonAutocompleteRequest() : IAutocompleteRequest, IRequest
 {
-    public PhotonAutocompleteRequest(IAutocompleteRequest request)
+    [SetsRequiredMembers]
+    public PhotonAutocompleteRequest(IAutocompleteRequest request): this()
     {
         Query = request.Query;
         Limit = request.Limit;
         BiasLocation = request.BiasLocation;
-        Zoom = request.Zoom;
+        Radius = request.Radius;
         Scale = request.Scale;
         BoundingBox = request.BoundingBox;
         Language = request.Language;
         TypeFilters = request.TypeFilters;
+        Region = request.Region;
         IgnoreErrors = request.IgnoreErrors;
     }
 
     /// <inheritdoc />>
     [Required(AllowEmptyStrings = false)]
-    public string Query { get; set; } = string.Empty;
+    public required string Query { get; set; }
 
     /// <inheritdoc />>
     [Range(1, 30)]
     public int? Limit { get; set; } = 15;
 
     /// <inheritdoc />>
-    public double? Zoom { get; set; } = 0.2;
+    public double? Radius { get; set; } = 16;
 
     /// <inheritdoc />>
-    public int? Scale { get; set; } = 14;
+    public double? Scale { get; set; } = 0.2;
+
+    /// <inheritdoc />>
+    /// todo: implement this as a client side filter as an option
+    public string? Region { get; set; }
 
     /// <inheritdoc />>
     public Point? BiasLocation { get; set; }
@@ -46,7 +54,7 @@ public record PhotonAutocompleteRequest : IAutocompleteRequest, IGeocodeRequest
     public string? Language { get; set; }
 
     /// <inheritdoc />>
-    public ISet<string> TypeFilters { get; set; } = ImmutableHashSet<string>.Empty;
+    public ISet<string> TypeFilters { get; set; } = new HashSet<string>();
 
     /// <summary>
     ///
@@ -75,10 +83,10 @@ public record PhotonAutocompleteRequest : IAutocompleteRequest, IGeocodeRequest
             builder.Append('&');
             builder.Append(CultureInfo.InvariantCulture, $"lat={BiasLocation.Y}");
 
-            if (Zoom is not null)
+            if (Radius is not null)
             {
                 builder.Append('&');
-                builder.Append(CultureInfo.InvariantCulture, $"zoom={Zoom}");
+                builder.Append(CultureInfo.InvariantCulture, $"zoom={Radius}");
             }
 
             if (Scale is not null)
@@ -105,8 +113,6 @@ public record PhotonAutocompleteRequest : IAutocompleteRequest, IGeocodeRequest
             builder.Append('&');
             builder.Append(CultureInfo.InvariantCulture, $"layer={typeFilter}");
         }
-
-        Console.WriteLine(builder);
 
         return builder.ToString();
     }

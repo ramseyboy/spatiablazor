@@ -1,11 +1,11 @@
-namespace SpatiaBlazor.Components.Attributes.Label;
+namespace SpatiaBlazor.Geocode.Abstractions.Descriptor;
 
-public interface ILabelFactory
+public interface IDescriptorFactory
 {
     /// <summary>
     ///
     /// </summary>
     /// <param name="record"></param>
     /// <returns>The structured label or empty if no valid properties or fallbacks</returns>
-    string Create(object record);
+    string Create<TRecord>(TRecord record);
 }

@@ -1,6 +1,6 @@
-namespace SpatiaBlazor.Components.Attributes.Label;
+namespace SpatiaBlazor.Geocode.Abstractions.Descriptor;
 
-internal class LabelOrderAttribute: Attribute
+internal class DescriptorOrderAttribute: Attribute
 {
     public required int Order { get; set; }
     public string? Delimiter { get; set; }
