@@ -99,7 +99,7 @@ public sealed record PlacesV1AutocompleteRequest: IAutocompleteRequest, IRequest
         {
             var csv = string.Join(',', TypeFilters);
             builder.Append('&');
-            builder.Append(CultureInfo.InvariantCulture, $"types={csv}");
+            builder.Append(CultureInfo.InvariantCulture, $"fields={csv}");
         }
 
         return builder.ToString();

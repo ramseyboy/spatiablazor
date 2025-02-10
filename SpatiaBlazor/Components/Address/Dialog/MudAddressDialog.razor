@@ -11,7 +11,7 @@
             </div>
         </div>
         <div class="pa-4">
-            <MudAddressComponent @ref="_form" @bind-Value="Value" SuggestionsParameters="SuggestionsParameters"></MudAddressComponent>
+            <MudAddressComponent @ref="_form" @bind-Value="_viewModel" SuggestionsParameters="SuggestionsParameters"></MudAddressComponent>
         </div>
     </DialogContent>
 </MudDialog>
@@ -19,7 +19,7 @@
 @code {
     
     [CascadingParameter]
-    private MudDialogInstance MudDialog { get; set; }
+    private MudDialogInstance? MudDialog { get; set; }
     
     [Parameter] public string Title { get; set; } = "Address";
     
@@ -30,26 +30,39 @@
     [Parameter] public Variant ButtonVariant { get; set; } = Variant.Text;
 
     [Parameter] public Color ButtonColor { get; set; } = Color.Default;
+
+    private AddressViewModel? _viewModel;
      
     private IAddressFormView? _form;
     
     protected override void OnInitialized()
     {
-        MudDialog.Options.NoHeader = true;
-        MudDialog.SetOptions(MudDialog.Options);
+        if (MudDialog != null)
+        {
+            MudDialog.Options.NoHeader = true;
+            MudDialog.SetOptions(MudDialog.Options);
+        }
+    }
+    
+    protected override void OnParametersSet()
+    {
+        if (Value is not null)
+        {
+            _viewModel = Value with { };
+        }
     }
     
     private void OnCloseClicked(MouseEventArgs? args = null)
     {
-        Value?.Clear();
-        MudDialog.Close(DialogResult.Cancel());
+        _viewModel?.Clear();
+        MudDialog?.Close(DialogResult.Cancel());
     }
 
     private async Task OnSaveClicked(MouseEventArgs? args = null)
     {
         if (_form is null)
         {
-            MudDialog.Close(DialogResult.Cancel());
+            MudDialog?.Close(DialogResult.Cancel());
             return;
         }
         
@@ -57,7 +70,7 @@
 
         if (_form.IsFormValid())
         {
-            MudDialog?.Close(DialogResult.Ok(Value));   
+            MudDialog?.Close(DialogResult.Ok(_viewModel));   
         }
     }
 }
