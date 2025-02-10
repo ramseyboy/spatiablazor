@@ -375,3 +375,5 @@ FodyWeavers.xsd
 **/appsettings.*.Martingdale.json
 
 **/.DS_Store
+
+**/coveragereport/

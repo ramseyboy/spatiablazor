@@ -6,11 +6,11 @@
 
 <MudField Variant="Variant" Label="@Label">
     <div @onclick="OpenDialog" Class="cursor-pointer d-flex align-baseline align-content-stretch justify-space-between">
-        <MudText>@Value?.Label()</MudText>
+        <MudText>@_viewModel?.Label()</MudText>
         <MudIconButton OnClick="OpenDialog" Icon="@Icons.Material.Filled.Map" aria-label="address" Size="Size.Small"/>
     </div>
 </MudField>
-@foreach(var error in validationErrors)
+@foreach(var error in _validationErrors)
 {
     <MudText Class="mt-2" Color="Color.Error" Typo="Typo.caption">@error</MudText>
 }
@@ -31,14 +31,24 @@
     [Parameter] public Variant ButtonVariant { get; set; }
     
     [Parameter] public Color ButtonColor { get; set; }
+
+    private AddressViewModel? _viewModel;
     
-    private List<string> validationErrors = new();
-    
+    private List<string> _validationErrors = [];
+
+    protected override void OnParametersSet()
+    {
+        if (Value is not null)
+        {
+            _viewModel = Value with { };
+        }
+    }
+
     private async Task OpenDialog(MouseEventArgs args)
     {
         var parameters = new DialogParameters<MudAddressDialog>
         {
-            {x => x.Value, Value},
+            {x => x.Value, _viewModel},
             {x => x.SuggestionsParameters, SuggestionsParameters},
             {x => x.ButtonVariant, ButtonVariant},
             {x => x.ButtonColor, ButtonColor}
@@ -53,13 +63,10 @@
         var dialog = await DialogService.ShowAsync<MudAddressDialog>(string.Empty, parameters, options);
         var result = await dialog.Result;
 
-        if (!result.Canceled && result.Data is AddressViewModel model)
+        if (result is {Canceled: false, Data: AddressViewModel model})
         {
-            Value = model;
-            await ValueChanged.InvokeAsync(Value);
-        } else if (result.Canceled)
-        {
-            await ValueChanged.InvokeAsync(null);
+            _viewModel = model;
+            await ValueChanged.InvokeAsync(_viewModel);
         }
     }
 
@@ -70,18 +77,18 @@
 
     public bool IsFormValid()
     {
-        return validationErrors.Count == 0;
+        return _validationErrors.Count == 0;
     }
 
     public Task TriggerFormValidation()
     {
-        validationErrors.Clear();
+        _validationErrors.Clear();
         
-        var validationResult = Validation?.GetValidationResult(Value, new ValidationContext(this));
+        var validationResult = Validation?.GetValidationResult(_viewModel, new ValidationContext(this));
         var attrValidationMessage = validationResult != ValidationResult.Success ? validationResult?.ErrorMessage : null;
         if (attrValidationMessage is not null)
         {
-            validationErrors.Add(attrValidationMessage);
+            _validationErrors.Add(attrValidationMessage);
         }
 
         return Task.CompletedTask;
