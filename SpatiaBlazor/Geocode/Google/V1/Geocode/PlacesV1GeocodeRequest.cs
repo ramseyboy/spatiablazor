@@ -1,6 +1,7 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Text;
+using System.Web;
 using NetTopologySuite.Geometries;
 using SpatiaBlazor.Geocode.Abstractions;
 
@@ -19,7 +20,9 @@ public sealed record PlacesV1GeocodeRequest() : IGeocodeRequest, IRequest
     {
         var builder = new StringBuilder();
         builder.Append('?');
-        builder.Append(CultureInfo.InvariantCulture, $"address={Query}");
+
+        var encodedQuery = HttpUtility.UrlEncode(Query);
+        builder.Append(CultureInfo.InvariantCulture, $"address={encodedQuery}");
 
         if (BoundingBox is not null)
         {

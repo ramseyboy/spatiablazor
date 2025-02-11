@@ -1,19 +1,19 @@
+using System.ComponentModel.DataAnnotations;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Text;
+using System.Web;
 using NetTopologySuite.Geometries;
 using SpatiaBlazor.Geocode.Abstractions;
 
 namespace SpatiaBlazor.Geocode.Google.V1.Autocomplete;
 
-public sealed record PlacesV1AutocompleteRequest: IAutocompleteRequest, IRequest
+public sealed record PlacesV1AutocompleteRequest(GoogleGeocodeConfigurationOptions options): IAutocompleteRequest, IRequest
 {
     private const string GeocodeTypeFilter = "geocode";
 
-    private GoogleGeocodeConfigurationOptions _options;
-
     [SetsRequiredMembers]
-    public PlacesV1AutocompleteRequest(IAutocompleteRequest request, GoogleGeocodeConfigurationOptions options)
+    public PlacesV1AutocompleteRequest(IAutocompleteRequest request, GoogleGeocodeConfigurationOptions options) : this(options)
     {
         Query = request.Query;
         Limit = request.Limit;
@@ -25,15 +25,14 @@ public sealed record PlacesV1AutocompleteRequest: IAutocompleteRequest, IRequest
         TypeFilters = request.TypeFilters;
         Region = request.Region;
         IgnoreErrors = request.IgnoreErrors;
-
-        _options = options;
     }
 
+    [Required]
     public required string Query { get; set; }
     public Point? BiasLocation { get; set; }
     public Envelope? BoundingBox { get; set; }
     public string? Language { get; set; }
-    public ISet<string> TypeFilters { get; set; }
+    public ISet<string> TypeFilters { get; set; } = new HashSet<string>();
     public double? Radius { get; set; }
     // todo: implement this as a switch of either bias location vs restrict location
     public double? Scale { get; set; }
@@ -45,7 +44,9 @@ public sealed record PlacesV1AutocompleteRequest: IAutocompleteRequest, IRequest
     {
         var builder = new StringBuilder();
         builder.Append('?');
-        builder.Append(CultureInfo.InvariantCulture, $"input={Query}");
+
+        var encodedQuery = HttpUtility.UrlEncode(Query);
+        builder.Append(CultureInfo.InvariantCulture, $"input={encodedQuery}");
 
         builder.Append('&');
         builder.Append("strictbounds=false");
@@ -86,7 +87,7 @@ public sealed record PlacesV1AutocompleteRequest: IAutocompleteRequest, IRequest
             builder.Append(CultureInfo.InvariantCulture, $"region={Region}");
         }
 
-        if (!_options.UsePlaceDetailApi)
+        if (!options.UsePlaceDetailApi)
         {
             if (TypeFilters.Count == 0)
             {
