@@ -18,6 +18,7 @@ public sealed record PhotonGeocodeRecord: IGeocodeRecord
     public string? HouseNumber { get; set; }
     [DescriptorOrder(Order = 3, Delimiter = ",")]
     public string? Street { get; set; }
+    public string? SubPremise { get; set; }
     [DescriptorOrder(Order = 4, Delimiter = ",")]
     public string? City { get; set; }
     [DescriptorOrder(Order = 5, Delimiter = ",")]

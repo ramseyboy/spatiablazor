@@ -58,6 +58,7 @@ public class PlacesV1GeocodeRecordFactory(
             Geom = point,
             BoundingBox = boundingBox,
             HouseNumber = addressMap.GetValueOrDefault(HouseNumberAttribute)?.ShortName,
+            SubPremise = addressMap.GetValueOrDefault(SubPremise)?.ShortName,
             Street = addressMap.GetValueOrDefault(StreetAttribute)?.ShortName,
             Locality = addressMap.GetValueOrDefault(LocalityAttribute)?.ShortName,
             City = addressMap.GetValueOrDefault(CityAttribute)?.ShortName,

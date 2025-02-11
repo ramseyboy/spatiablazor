@@ -13,6 +13,7 @@ public sealed record GoogleGeocodeRecord : IGeocodeRecord
     public string? Name { get; set; }
     public string? Street { get; set; }
     public string? HouseNumber { get; set; }
+    public string? SubPremise { get; set; }
     public string? City { get; set; }
     public string? Locality { get; set; }
     public string? CountyOrRegion { get; set; }

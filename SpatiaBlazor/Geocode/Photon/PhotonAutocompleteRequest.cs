@@ -3,6 +3,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Text;
+using System.Web;
 using NetTopologySuite.Geometries;
 using SpatiaBlazor.Geocode.Abstractions;
 
@@ -68,7 +69,8 @@ public sealed record PhotonAutocompleteRequest() : IAutocompleteRequest, IReques
     {
         var builder = new StringBuilder();
         builder.Append("api?");
-        builder.Append(CultureInfo.InvariantCulture, $"q={Query}");
+        var encodedQuery = HttpUtility.UrlEncode(Query);
+        builder.Append(CultureInfo.InvariantCulture, $"q={encodedQuery}");
 
         if (Limit is not null)
         {
