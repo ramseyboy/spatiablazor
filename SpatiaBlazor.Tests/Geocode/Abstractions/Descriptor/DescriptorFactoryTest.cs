@@ -90,6 +90,7 @@ public class TestAddressRecord: IAddressRecord
     public string? HouseNumber { get; set; }
     [DescriptorOrder(Order = 3, Delimiter = ",")]
     public string? Street { get; set; }
+    public string? SubPremise { get; set; }
     [DescriptorOrder(Order = 4, Delimiter = ",")]
     public string? City { get; set; }
     [DescriptorOrder(Order = 5, Delimiter = ",")]
@@ -111,6 +112,7 @@ public class TestAddressRecordWithFallback: IAddressRecord
     public string? HouseNumber { get; set; }
     [DescriptorOrder(Order = 3, Delimiter = ",")]
     public string? Street { get; set; }
+    public string? SubPremise { get; set; }
     [DescriptorOrder(Order = 4, Delimiter = ",")]
     public string? City { get; set; }
     [DescriptorOrder(Order = 5, Delimiter = ",")]

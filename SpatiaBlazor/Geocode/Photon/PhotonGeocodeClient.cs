@@ -28,6 +28,15 @@ public sealed class PhotonGeocodeClient(
             var response = await httpClient.GetAsync(
                 photonRequest.ToRequestPath(),
                 cancellationToken: token);
+
+            if (!response.IsSuccessStatusCode)
+            {
+                logger.LogError("Geocode request to {url} resulting in an error response with message {reason}", httpClient.BaseAddress, response.ReasonPhrase);
+                var errorResponse = await response.Content.ReadAsStringAsync(token);
+                logger.LogError(errorResponse);
+                throw new GeocodeException($"Autocomplete request to {httpClient.BaseAddress} resulting in an error response with message {response.ReasonPhrase}");
+            }
+
             var responseBody = await response.Content.ReadAsStreamAsync(token);
             var collection = await JsonSerializer.DeserializeAsync<FeatureCollection>(
                 responseBody,

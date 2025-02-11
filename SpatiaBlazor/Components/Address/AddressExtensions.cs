@@ -44,6 +44,12 @@ public static class AddressExtensions
         }
 
         viewModel.Address1 = builder.ToString();
+
+        if (!string.IsNullOrWhiteSpace(geocode.SubPremise))
+        {
+            viewModel.Address2 = geocode.SubPremise;
+        }
+
         viewModel.City = geocode.City ?? string.Empty;
         viewModel.StateOrProvince = geocode.StateOrProvince ?? string.Empty;
         viewModel.Country = geocode.CountryCode ?? string.Empty;

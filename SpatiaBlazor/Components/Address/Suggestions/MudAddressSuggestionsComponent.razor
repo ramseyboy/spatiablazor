@@ -1,12 +1,23 @@
+@using System.ComponentModel.Design.Serialization
+@using Microsoft.Extensions.Logging
+@using SpatiaBlazor.Geocode.Abstractions
+
 @inherits MudBaseInput<IGeocodeRecord>
 @implements ISuggestionsView
-@using SpatiaBlazor.Geocode.Abstractions
 @implements IDisposable
 @inject IAddressSuggestionsPresenter Presenter
+@inject ILogger<MudAddressSuggestionsComponent> ComponentLogger
 
 @{
     base.BuildRenderTree(__builder);
 }
+
+<div style="height: 12px">
+    @if (_isLoading)
+    {
+        <MudProgressLinear  Color="Color.Primary" Indeterminate="true" />
+    }
+</div>
 
 <MudAutocomplete
     T="IAutocompleteRecord?"
@@ -29,6 +40,8 @@
     DebounceInterval="@SuggestionsParameters.DebounceInterval"
     MinCharacters="@SuggestionsParameters.MinQueryLength"
     SearchFunc="@OnSearch"
+    Strict="false"
+    OpenOnFocus="false"
     ToStringFunc="@(model => model?.Descriptor ?? string.Empty)"
     MaxItems="SuggestionsParameters.Limit"
     ShowProgressIndicator="true"
@@ -36,9 +49,16 @@
     CoerceText="false"
     Clearable="Clearable"
     ValueChanged="OnAutocompleteSelected"
-    Value="selectedAutocompleteValue"
+    Value="Presenter.SelectedAutocompleteValue"
     @ref="_autocompleteRef"
-    />
+/>
+
+<div style="height: 8px">
+    @if (_errorText is not null)
+    {
+        <MudText Class="mx-2" Color="Color.Error" Typo="Typo.caption">@_errorText</MudText>
+    }
+</div>
 
 @code {
     
@@ -53,21 +73,53 @@
     public bool Clearable { get; set; }
     
     [Parameter] public AddressSuggestionsParametersViewModel SuggestionsParameters { get; set; } = new();
-
-    private IAutocompleteRecord? selectedAutocompleteValue;
     
     private MudAutocomplete<IAutocompleteRecord>? _autocompleteRef;
     
     private readonly CancellationTokenSource _cts = new();
     
-    protected override Task OnInitializedAsync()
+    private string? _errorText;
+    
+    private bool _isLoading = false;
+
+    private const string InitErrorMsg = "There was an error during initialization, please refresh the page and try again";
+    
+    protected override async Task OnInitializedAsync()
     {
-        return Presenter.InitializeAsync(this, _cts.Token);
+        try
+        {
+            await Presenter.InitializeAsync(this, _cts.Token);
+            ClearError();
+        }
+        catch (OperationCanceledException e)
+        {
+            ClearError();
+            ComponentLogger.LogWarning(e, "Operation Canceled during InitializeAsync");
+        }
+        catch (InvalidOperationException e)
+        {
+            ComponentLogger.LogError(e, "Presenter is not initialized or in bad state");
+            SetError(InitErrorMsg);
+        }
     }
 
-    protected override void OnParametersSet()
+    protected override async Task OnParametersSetAsync()
     {
-        selectedAutocompleteValue = Value;
+        try
+        {
+            await Presenter.HandleParametersAsync(_cts.Token);
+            ClearError();
+        }
+        catch (OperationCanceledException e)
+        {
+            ClearError();
+            ComponentLogger.LogWarning(e, "Operation Canceled during OnParametersSetAsync");
+        }
+        catch (InvalidOperationException e)
+        {
+            ComponentLogger.LogError(e, "Presenter is not initialized or in bad state");
+            SetError(InitErrorMsg);
+        }
     }
 
     public void TriggerRender()
@@ -77,36 +129,108 @@
 
     private async Task OnAutocompleteSelected(IAutocompleteRecord? record)
     {
-        var geocodeResult = await Presenter.SuggestionClicked(record, _cts.Token);
-        await ValueChanged.InvokeAsync(geocodeResult);
+        try
+        {
+            if (record is not null)
+            {
+                var geocodeResult = await Presenter.SuggestionClicked(record, _cts.Token);
+                await ValueChanged.InvokeAsync(geocodeResult);   
+            }
+            else
+            {
+                await ValueChanged.InvokeAsync(null);
+            }
+            ClearError();
+        }
+        catch (OperationCanceledException e)
+        {
+            ClearError();
+            ComponentLogger.LogWarning(e, "Operation Canceled during OnAutocompleteSelected");
+        }
+        catch (InvalidOperationException e)
+        {
+            ComponentLogger.LogError(e, "Presenter is not initialized or in bad state");
+            SetError(InitErrorMsg);
+        }
+        catch (SuggestionsException e)
+        {
+            ComponentLogger.LogError(e, "Suggestions error during OnAutocompleteSelected");
+            SetError(e.Message);
+        }
     }
 
     private async Task<IEnumerable<IAutocompleteRecord>> OnSearch(string query, CancellationToken token)
     {
-        if (SuggestionsParameters is null || string.IsNullOrWhiteSpace(query))
+        try
         {
-            return Array.Empty<IAutocompleteRecord>();
+            var record = await Presenter.Suggest(query, token);
+            ClearError();
+            return record;
+        }
+        catch (OperationCanceledException e)
+        {
+            ClearError();
+            ComponentLogger.LogWarning(e, "Operation Canceled during OnSearch");
+        }
+        catch (InvalidOperationException e)
+        {
+            ComponentLogger.LogError(e, "Presenter is not initialized or in bad state");
+            SetError(InitErrorMsg);
+        }
+        catch (SuggestionsException e)
+        {
+            ComponentLogger.LogError(e, "Suggestions error during OnSearch");
+            SetError(e.Message);
         }
 
-        SuggestionsParameters.Query = query;
-        return await Presenter.Suggest(token);
+        return [];
     }
 
     /// <summary>
-    /// Resets the Text and Value, and closes the drop-down if it is open.
+    /// Resets the Text and Value and any error text, and closes the drop-down if it is open.
     /// </summary>
     public async Task ClearAsync()
     {
+        ClearError();
         if (_autocompleteRef is not null)
         {
             await _autocompleteRef.ClearAsync();
         }
     }
     
-    public void Dispose()
+    /// <summary>
+    /// Resets the error text.
+    /// </summary>
+    public void ClearError()
     {
-        _cts.Cancel();
-        _cts.Dispose();
+        SetError(null);
+    }
+    
+    public void StartLoading()
+    {
+        _isLoading = true;
     }
 
+    public void StopLoading()
+    {
+        _isLoading = false;
+    }
+    
+    public void Dispose()
+    {
+        try
+        {
+            _cts.Cancel();
+            _cts.Dispose();
+        }
+        catch (ObjectDisposedException)
+        {
+            //ignore
+        }
+    }
+    
+    private void SetError(string? message)
+    {
+        _errorText = message;
+    }
 }

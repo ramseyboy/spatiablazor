@@ -7,6 +7,7 @@ public sealed record PlacesV1AddressComponent
     public const string StateAttribute = "administrative_area_level_1";
     public const string CityAttribute = "locality";
     public const string CountryAttribute = "country";
+    public const string SubPremise = "subpremise";
     public const string HouseNumberAttribute = "street_number";
     public const string PostCodeAttribute = "postal_code";
     public const string StreetAttribute = "route";
