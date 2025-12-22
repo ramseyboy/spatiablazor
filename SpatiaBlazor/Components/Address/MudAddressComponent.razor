@@ -143,6 +143,8 @@
             _viewModel.Clear();
             await ValueChanged.InvokeAsync(null);
         }
+
+        await TriggerFormValidation();
     }
 
     public void TriggerRender()
