@@ -15,6 +15,9 @@
         <IsPackable>true</IsPackable>
         <RootNamespace>SpatiaBlazor</RootNamespace>
         <IncludeSymbols>true</IncludeSymbols>
+        <IncludeSource>True</IncludeSource>
+        <DebugType>portable</DebugType>
+        <EmbedAllSources>true</EmbedAllSources>
         <SymbolPackageFormat>snupkg</SymbolPackageFormat>
         <PublishRepositoryUrl>true</PublishRepositoryUrl>
         <GeneratePackageOnBuild>False</GeneratePackageOnBuild>
@@ -34,7 +37,6 @@
 
     <PropertyGroup>
       <GenerateDocumentationFile>True</GenerateDocumentationFile>
-  
       <!-- If all members are not documented, you can disable the compiler warnings -->
       <NoWarn>$(NoWarn);CS1591</NoWarn>
     </PropertyGroup>
