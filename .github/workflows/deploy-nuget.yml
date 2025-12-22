@@ -28,7 +28,7 @@ jobs:
         if: ${{ github.ref_type == 'tag' }}
       - name: 'Nuget Pack'
         run: |
-          dotnet pack ./*.sln --configuration Release /p:Version=${VERSION} --output pack/
+          dotnet pack ./*.sln --configuration Release /p:Version=${VERSION} --output pack/ --include-symbols --include-source
       - name: 'Publish Nuget Package'
-        run: dotnet nuget push pack/**.nupkg --include-symbols -p:SymbolPackageFormat=snupkg -s https://api.nuget.org/v3/index.json --api-key ${{secrets.NUGET_API_KEY}}
+        run: dotnet nuget push pack/**.nupkg -s https://api.nuget.org/v3/index.json --api-key ${{secrets.NUGET_API_KEY}}
         if: ${{github.event_name != 'pull_request'}}  
